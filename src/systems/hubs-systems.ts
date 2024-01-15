@@ -81,6 +81,7 @@ import { mixerAnimatableSystem } from "../bit-systems/mixer-animatable";
 import { loopAnimationSystem } from "../bit-systems/loop-animation";
 import { linkSystem } from "../bit-systems/link-system";
 import { objectMenuTransformSystem } from "../bit-systems/object-menu-transform-system";
+import { hoverableVisualsSystem } from "../bit-systems/hoverable-visuals-system";
 
 declare global {
   interface Window {
@@ -203,6 +204,8 @@ export function mainTick(xrFrame: XRFrame, renderer: WebGLRenderer, scene: Scene
   hubsSystems.physicsSystem.tick(dt);
   constraintsSystem(world, hubsSystems.physicsSystem);
   floatyObjectSystem(world);
+
+  hoverableVisualsSystem(world);
 
   // We run this earlier in the frame so things have a chance to override properties run by animations
   hubsSystems.animationMixerSystem.tick(dt);
