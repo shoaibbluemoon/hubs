@@ -81,6 +81,7 @@ import { mixerAnimatableSystem } from "../bit-systems/mixer-animatable";
 import { loopAnimationSystem } from "../bit-systems/loop-animation";
 import { linkSystem } from "../bit-systems/link-system";
 import { objectMenuTransformSystem } from "../bit-systems/object-menu-transform-system";
+import { sfxButtonSystem } from "../bit-systems/sfx-button-system";
 import { sfxMediaSystem } from "../bit-systems/sfx-media-system";
 
 declare global {
@@ -200,6 +201,7 @@ export function mainTick(xrFrame: XRFrame, renderer: WebGLRenderer, scene: Scene
   interactionSystem(world, hubsSystems.cursorTargettingSystem, t, aframeSystems);
 
   buttonSystems(world);
+  sfxButtonSystem(world, aframeSystems["hubs-systems"].soundEffectsSystem);
 
   physicsCompatSystem(world, hubsSystems.physicsSystem);
   hubsSystems.physicsSystem.tick(dt);
