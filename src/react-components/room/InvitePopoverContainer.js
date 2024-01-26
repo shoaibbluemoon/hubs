@@ -5,35 +5,36 @@ import { hubUrl } from "../../utils/phoenix-utils";
 import { InvitePopoverButton } from "./InvitePopover";
 import { handleExitTo2DInterstitial } from "../../utils/vr-interstitial";
 import { useInviteUrl } from "./useInviteUrl";
+import { sharingEnabled } from "../../vision/config/visFeatureConfig"
+import { vision } from "../../vision/visionUtils";
+import { DOMAIN } from "../../utils/api";
 
-export function InvitePopoverContainer({ hub, hubChannel, scene, store, ...rest }) {
+export function InvitePopoverContainer({ hub, hubChannel, scene, ...rest }) {
   // TODO: Move to Hub class
-  const shortUrl = `https://${configs.SHORTLINK_DOMAIN}`;
+  const shortUrl = DOMAIN;
   const url = `${shortUrl}/${hub.hub_id}`;
-
-  let embedText = null;
-  const embedToken = hub.embed_token || store.getEmbedTokenForHub(hub);
-  if (embedToken) {
-    const embedUrl = hubUrl(hub.hub_id, { embed_token: embedToken });
-    embedText = `<iframe src="${embedUrl}" style="width: 1024px; height: 768px;" allow="microphone; camera; vr; speaker;"></iframe>`;
-  }
-
+  const embedUrl = hubUrl(hub.hub_id, { embed_token: hub.embed_token });
+  const embedText = `<iframe src="${embedUrl}" style="width: 1024px; height: 768px;" allow="microphone; camera; vr; speaker;"></iframe>`;
+  const code = hub.entry_code.toString().padStart(6, "0");
   const popoverApiRef = useRef();
 
   // Handle clicking on the invite button while in VR.
-  useEffect(() => {
-    function onInviteButtonClicked() {
-      handleExitTo2DInterstitial(true, () => {}).then(() => {
-        popoverApiRef.current.openPopover();
-      });
-    }
+  useEffect(
+    () => {
+      function onInviteButtonClicked() {
+        handleExitTo2DInterstitial(true, () => {}).then(() => {
+          popoverApiRef.current.openPopover();
+        });
+      }
 
-    scene.addEventListener("action_invite", onInviteButtonClicked);
+      scene.addEventListener("action_invite", onInviteButtonClicked);
 
-    return () => {
-      scene.removeEventListener("action_invite", onInviteButtonClicked);
-    };
-  }, [scene, popoverApiRef]);
+      return () => {
+        scene.removeEventListener("action_invite", onInviteButtonClicked);
+      };
+    },
+    [scene, popoverApiRef]
+  );
 
   const inviteRequired = hub.entry_mode === "invite";
   const canGenerateInviteUrl = hubChannel.can("update_hub");
@@ -47,23 +48,28 @@ export function InvitePopoverContainer({ hub, hubChannel, scene, store, ...rest 
     return null;
   }
 
-  return (
-    <InvitePopoverButton
-      inviteRequired={inviteRequired}
-      fetchingInvite={fetchingInvite}
-      inviteUrl={inviteUrl}
-      revokeInvite={revokeInvite}
-      url={url}
-      embed={embedText}
-      popoverApiRef={popoverApiRef}
-      {...rest}
-    />
-  );
+  if(sharingEnabled && vision.api.isAdmin){
+    return (
+      <InvitePopoverButton
+        inviteRequired={inviteRequired}
+        fetchingInvite={fetchingInvite}
+        inviteUrl={inviteUrl}
+        revokeInvite={revokeInvite}
+        shortUrl={shortUrl}
+        url={url}
+        code={code}
+        embed={embedText}
+        popoverApiRef={popoverApiRef}
+        {...rest}
+      />
+    );
+  }else{
+    return <></>
+  }
 }
 
 InvitePopoverContainer.propTypes = {
   hub: PropTypes.object.isRequired,
   scene: PropTypes.object.isRequired,
-  hubChannel: PropTypes.object.isRequired,
-  store: PropTypes.object.isRequired
+  hubChannel: PropTypes.object.isRequired
 };

@@ -10,6 +10,7 @@ export function showHoverEffect(el) {
   const isSpawner = !!el.components["super-spawner"];
   const isEmojiSpawner = isSpawner && el.components["super-spawner"].data.template === "#interactable-emoji";
   const isEmoji = !!el.components.emoji;
+ 
   const canMove =
     (isEmoji || isEmojiSpawner
       ? window.APP.hubChannel.can("spawn_emoji")
@@ -26,6 +27,7 @@ export function canMove(entity) {
     entity && entity.components["super-spawner"] && entity.components["super-spawner"].data.template;
   const isEmojiSpawner = spawnerTemplate === "#interactable-emoji";
   const isEmoji = !!entity.components.emoji;
+
   return (
     hasComponent(APP.world, HoldableButton, entity.eid) ||
     ((isEmoji || isEmojiSpawner

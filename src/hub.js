@@ -157,6 +157,8 @@ import MessageDispatch from "./message-dispatch";
 import SceneEntryManager from "./scene-entry-manager";
 import Subscriptions from "./subscriptions";
 import { createInWorldLogMessage } from "./react-components/chat-message";
+import { Http } from './utils/http';
+import { API_ENDPOINTS, BASE_URL, exitRoom, testEnd } from './utils/api';
 
 import "./systems/nav";
 import "./systems/frame-scheduler";
@@ -214,6 +216,7 @@ const NOISY_OCCUPANT_COUNT = 30; // Above this # of occupants, we stop posting j
 const qs = new URLSearchParams(location.search);
 const isMobile = AFRAME.utils.device.isMobile();
 const isMobileVR = AFRAME.utils.device.isMobileVR();
+const isVRConnected = AFRAME.utils.device.checkHeadsetConnected();
 const isEmbed = window.self !== window.top;
 if (isEmbed && !qs.get("embed_token")) {
   // Should be covered by X-Frame-Options, but just in case.
@@ -688,9 +691,197 @@ async function runBotMode(scene, entryManager) {
   entryManager.enterSceneWhenLoaded(false, false);
 }
 
+async function isUserAuthorized() {
+  try {
+    let token = qs.get('entry');
+    if (token) {
+      window.localStorage.setItem('token', token);
+    } else {
+      token = window.localStorage.getItem('token');
+    }
+    if (isVRConnected) return true;
+    return token !== null;
+  } catch (e) {
+    return false;
+  }
+}
+
+function showTokenLockedUI(info) {
+  const { CHAIN, PROJECT_NAME, PROJECT_LINK, TOKEN, LOCK_TYPE } = info;
+
+  const tokenLock = document.getElementById('token-lock');
+
+  const container = document.createElement('div');
+  container.classList.add('token-lock__container');
+
+  const tokenLockTextChainInfo = document.createElement('p');
+  const tokenLockTextProjectName = document.createElement('p');
+  const tokenLockTextProjectWebsite = document.createElement('a');
+  const tokenLockTextContractAddress = document.createElement('p');
+  const linkMetaManagement = document.createElement('a');
+
+  tokenLockTextChainInfo.classList.add('token-lock__content-text', 'chain-info');
+  tokenLockTextChainInfo.innerText = `This room is a ${chains[CHAIN]} ${
+    LOCK_TYPE === 4 ? 'NFT Token Locked' : 'Token Locked'
+  }, please visit the project:`;
+
+  tokenLockTextProjectName.classList.add('token-lock__content-text', 'project-name');
+  tokenLockTextProjectName.innerText = PROJECT_NAME;
+
+  tokenLockTextProjectWebsite.classList.add('token-lock__content-text', 'project-website', 'link');
+  tokenLockTextProjectWebsite.setAttribute('href', PROJECT_LINK);
+  tokenLockTextProjectWebsite.setAttribute('target', '_blank');
+  tokenLockTextProjectWebsite.setAttribute('rel', 'noreferrer');
+  tokenLockTextProjectWebsite.innerText = PROJECT_LINK;
+
+  tokenLockTextContractAddress.classList.add('token-lock__content-text', 'contract-address');
+  tokenLockTextContractAddress.innerText = TOKEN;
+
+  linkMetaManagement.classList.add('token-lock__content-text', 'link-meta-management', 'link');
+  linkMetaManagement.setAttribute('href', iframeURL);
+  linkMetaManagement.innerText = 'Visit Meta Management APP';
+
+  container.appendChild(tokenLockTextChainInfo);
+  container.appendChild(tokenLockTextProjectName);
+  container.appendChild(tokenLockTextProjectWebsite);
+  container.appendChild(tokenLockTextContractAddress);
+  container.appendChild(linkMetaManagement);
+
+  tokenLock.appendChild(container);
+  tokenLock.classList.add('visible');
+}
+
+async function isBannedUser() {
+  try {
+    let token = window.localStorage.getItem('token');
+    const defaultRoomId = configs.feature('default_room_id');
+    if (!token) return false;
+
+    const hubId =
+      qs.get('hub_id') ||
+      (document.location.pathname === '/' && defaultRoomId
+        ? defaultRoomId
+        : document.location.pathname.substring(1).split('/')[0]);
+
+    const response = await fetch(`${BASE_URL}/auth?roomId=${hubId}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.ok) {
+      const { metaverseAccessToken, userRank, walletId, email } = await response.json();
+
+      window.APP.rank = userRank;
+      window.APP.userWalletId = walletId;
+      window.APP.userEmail = email;
+
+      if (metaverseAccessToken) {
+        window.localStorage.setItem('metaverse-token', metaverseAccessToken);
+      }
+    }
+
+    if (response.status === 403) {
+      const info = await response.json();
+
+      if (!info?.error) {
+        showTokenLockedUI(info);
+      }
+
+      return true;
+    }
+
+    return false;
+  } catch (e) {
+    return false;
+  }
+}
+
+async function getRoomDetails() {
+  try {
+    const defaultRoomId = configs.feature('default_room_id');
+    const hubId =
+      qs.get('hub_id') ||
+      (document.location.pathname === '/' && defaultRoomId
+        ? defaultRoomId
+        : document.location.pathname.substring(1).split('/')[0]);
+
+    const body = {
+      roomid: hubId,
+    };
+
+    const response = await fetch(`${BASE_URL}/getroomdetails`, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (response.ok) {
+      const roomDetails = await response.json();
+
+      window.APP.roomCreatedDate = (roomDetails.length && roomDetails[0]['CREATED_DATE']) || new Date('2000');
+      window.APP.isUnlimitedDate = (roomDetails.length && roomDetails[0]['ISUNLIMITEDACCESS']) || false;
+      window.APP.isSuspend = (roomDetails.length && roomDetails[0]['ISSUSPENDED']) || false;
+      window.APP.isClosed = (roomDetails.length && roomDetails[0]['CLOSED']) || false;
+      window.APP.ownerWalletId = (roomDetails.length && roomDetails[0]['WALLETID']) || '';
+    }
+
+    return response.ok;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+async function canMessageUser() {
+  try {
+    const token = window.localStorage.getItem('token');
+
+    const res = await fetch(`${BASE_URL}/checkcanmessage`, {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const { canMessage } = await res.json();
+
+    return !Boolean(canMessage);
+  } catch (e) {
+    return true;
+  }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
-  if (isOAuthModal) {
+  const isAuthorized = await isUserAuthorized();
+  const isBanned = await isBannedUser();
+  const isRoomExist = await getRoomDetails();
+  const isMessagingBanned = await canMessageUser();
+
+  if (isOAuthModal || isBanned) {
     return;
+  }
+
+  if (!isRoomExist) {
+    document.querySelector('#login-error-message').classList.add('visible');
+
+    return;
+  }
+
+  if (isAuthorized) {
+    window.APP.isAuthorized = true;
+  } else {
+    document.querySelector('#login-error-message').classList.add('visible');
+    return;
+  }
+
+  if (isMessagingBanned) {
+    window.APP.isMessagingBanned = true;
+  } else {
+    window.APP.isMessagingBanned = false;
   }
 
   await store.initProfile();
@@ -715,18 +906,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  const hubId = getCurrentHubId();
+  const defaultRoomId = configs.feature('default_room_id');
+
+  const hubId =
+    qs.get('hub_id') ||
+    (document.location.pathname === '/' && defaultRoomId
+      ? defaultRoomId
+      : document.location.pathname.substring(1).split('/')[0]);
+  // const hubId = getCurrentHubId();
   console.log(`Hub ID: ${hubId}`);
 
-  const shouldRedirectToSignInPage =
-    // Default room won't work if account is required to access
-    !configs.feature("default_room_id") &&
-    configs.feature("require_account_for_join") &&
-    !(store.state.credentials && store.state.credentials.token);
-  if (shouldRedirectToSignInPage) {
-    document.location = `/?sign_in&sign_in_destination=hub&sign_in_destination_url=${encodeURIComponent(
-      document.location.toString()
-    )}`;
+  if (!defaultRoomId) {
+    const shouldRedirectToSignInPage =
+      // Default room won't work if account is required to access
+      !configs.feature("default_room_id") &&
+      configs.feature("require_account_for_join") &&
+      !(store.state.credentials && store.state.credentials.token);
+    if (shouldRedirectToSignInPage) {
+      document.location = `/?sign_in&sign_in_destination=hub&sign_in_destination_url=${encodeURIComponent(
+        document.location.toString()
+      )}`;
+    }
   }
 
   const subscriptions = new Subscriptions(hubId);

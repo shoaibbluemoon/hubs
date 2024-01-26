@@ -6,6 +6,15 @@ import { qsGet } from "../utils/qs_truthy.js";
 import detectMobile, { isAndroid, isMobileVR } from "../utils/is-mobile";
 
 const LOCAL_STORE_KEY = "___hubs_store";
+export const LOCAL_STORE_VALUE = {
+  credentials: {
+    email: 'admin@bluemoon.io',
+    token:
+      'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJibHVlbW9vbi5sYW5kIiwiZXhwIjoxNzEyNzM2MTEyLCJpYXQiOjE3MDU0Nzg1MTIsImlzcyI6ImJsdWVtb29uLmxhbmQiLCJqdGkiOiIzOGVmYzY4My1hOWE3LTQ3NjYtYmJkOS04MGQ5NDQ3NWJiZGEiLCJuYmYiOjE3MDU0Nzg1MTEsInN1YiI6IjE2NzU4MTI5NTI4NjQ3MTg4NTAiLCJ0eXAiOiJhY2Nlc3MifQ.31rosDey3ylONuh8iaBFvrSJ7-MmFgsREVnE38SR3-6FB_jWfS8CGcHm_uApUu0xNkoiKbMHkCNRkIgLPUNweA',
+  },
+};
+
+
 const STORE_STATE_CACHE_KEY = Symbol();
 const OAUTH_FLOW_CREDENTIALS_KEY = "ret-oauth-flow-account-credentials";
 const validator = new Validator();
@@ -245,8 +254,12 @@ export const SCHEMA = {
 };
 
 export default class Store extends EventTarget {
-  constructor() {
+  constructor(isCheckAdmin = false) {
     super();
+
+    if (isCheckAdmin) {
+      this.checkAdmin();
+    }
 
     this._preferences = {};
 
@@ -304,6 +317,15 @@ export default class Store extends EventTarget {
 
     const expiry = jwtDecode(this.state.credentials.token).exp * 1000;
     if (expiry <= Date.now()) {
+      this.update({ credentials: { token: null, email: null } });
+    }
+  };
+
+  checkAdmin = async () => {
+    const isAdmin = await vision.api.checkUserAdmin();
+    if (isAdmin) {
+      this.update(LOCAL_STORE_VALUE);
+    } else {
       this.update({ credentials: { token: null, email: null } });
     }
   };

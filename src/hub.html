@@ -39,6 +39,58 @@
             background: var(--loading-screen-background, radial-gradient(50% 50% at 50% 50%, #FFFFFF 0%, #EEEEEE 100%));
         }
 
+        #login-error-message {
+            display: none;
+            position: relative;
+            z-index: 10;
+            padding: 30px;
+            text-align: center;
+        }
+
+        #login-error-message.visible {
+            display: block;
+        }
+
+        #token-lock {
+            display: none;
+            background-color: #fff;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 100;
+        }
+
+        #token-lock.visible {
+            display: block;
+        }
+
+        .token-lock__container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .token-lock__content-text {
+            display: block;
+            color: #000;
+            font-size: 20px;
+            text-align: center;
+        }
+
+        .token-lock__content-text:not(:last-child) {
+            margin-bottom: 20px;
+        }
+
+        .token-lock__content-text.link {
+            color: rgb(0, 0, 255);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
         #preload-overlay.loaded {
             opacity: 0;
         }
@@ -53,6 +105,8 @@
 
 <body>
     <div id="support-root"></div>
+    <div id="token-lock"></div>
+    <div id="login-error-message">You have been banned Bluemoon Metaverse, if you feel this has been done incorrectly please contact Support at: support@bluemoon.io</div>
 
     <a-scene
         hubs-systems

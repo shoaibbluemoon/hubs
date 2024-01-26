@@ -8,12 +8,14 @@ import { AuthContextProvider } from "./react-components/auth/AuthContext";
 import "./react-components/styles/global.scss";
 import { ThemeProvider } from "./react-components/styles/theme";
 import { store } from "./utils/store-instance";
+import { vision } from "./vision/visionUtils";
 
 registerTelemetry("/home", "Hubs Home Page");
 
 window.APP = { store };
 
 function Root() {
+  vision.automation.CreateRoom();
   return (
     <WrappedIntlProvider>
       <ThemeProvider store={store}>

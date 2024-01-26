@@ -4,6 +4,11 @@ import { PeopleSidebar } from "./PeopleSidebar";
 import { getMicrophonePresences } from "../../utils/microphone-presence";
 import ProfileEntryPanel from "../profile-entry-panel";
 import { UserProfileSidebarContainer } from "./UserProfileSidebarContainer";
+import { FormattedMessage, useIntl } from "react-intl";
+import { BackButton } from "../input/BackButton";
+import { CloseButton } from "../input/CloseButton";
+import { Sidebar } from "../sidebar/Sidebar";
+import { Profile } from "../profile/Profile";
 import { useCan } from "./useCan";
 import { useRoomPermissions } from "./useRoomPermissions";
 import { useRole } from "./useRole";
@@ -86,6 +91,7 @@ export function PeopleSidebarContainer({
   displayNameOverride,
   store,
   mediaSearchStore,
+  showBackButton,
   performConditionalSignIn,
   onCloseDialog,
   showNonHistoriedDialog,
@@ -93,6 +99,7 @@ export function PeopleSidebarContainer({
 }) {
   const people = usePeopleList(presences, mySessionId);
   const [selectedPersonId, setSelectedPersonId] = useState(null);
+  const thisPerson = people.find(person => person.id === mySessionId);
   const selectedPerson = people.find(person => person.id === selectedPersonId);
   const setSelectedPerson = useCallback(
     person => {
@@ -102,20 +109,7 @@ export function PeopleSidebarContainer({
   );
 
   if (selectedPerson) {
-    if (selectedPerson.id === mySessionId) {
-      return (
-        <ProfileEntryPanel
-          containerType="sidebar"
-          displayNameOverride={displayNameOverride}
-          store={store}
-          mediaSearchStore={mediaSearchStore}
-          finished={() => setSelectedPersonId(null)}
-          history={history}
-          showBackButton
-          onBack={() => setSelectedPersonId(null)}
-        />
-      );
-    } else {
+    if (thisPerson.roles.owner && selectedPerson.id === mySessionId) {
       return (
         <UserProfileSidebarContainer
           user={selectedPerson}
@@ -126,6 +120,21 @@ export function PeopleSidebarContainer({
           onCloseDialog={onCloseDialog}
           showNonHistoriedDialog={showNonHistoriedDialog}
         />
+      );
+    } else {
+      return (
+        <Sidebar
+          title={<FormattedMessage id="avatar-settings-sidebar.title" defaultMessage="Profile" />}
+          beforeTitle={showBackButton ? <BackButton onClick={() => setSelectedPersonId(null)} /> : <CloseButton onClick={onClose} />}
+        >
+          <Profile
+            name={selectedPerson.profile.displayName}
+            isMe={selectedPerson.isMe}
+            rank={'DIAMOND'}
+            status={'This is where a users bio will be. ' +
+              'This is where a users bio will be. This is where a users bio will be.'}
+          />
+        </Sidebar>
       );
     }
   }

@@ -11,12 +11,18 @@
   right: 0;
   bottom: 0;
   top: 0;
-  background: theme.$loading-screen-background;
+  background: #fff;
 
   font-size: theme.$font-size-sm;
 
   @media(min-width: theme.$breakpoint-lg) and (min-height: theme.$breakpoint-vr) {
     font-size: theme.$font-size-md;
+  }
+
+  p,
+  b {
+    color: #000;
+    font-size: 15px;
   }
 }
 

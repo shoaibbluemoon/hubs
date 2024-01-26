@@ -27,6 +27,7 @@ const ask = q => new Promise(res => rl.question(q, res));
       throw new Error();
     }
   } catch (e) {
+    console.log(e)
     console.log("Sorry, that doesn't look like a Hubs Cloud server.");
     process.exit(0);
   }

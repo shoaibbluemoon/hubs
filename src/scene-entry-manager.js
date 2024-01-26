@@ -212,30 +212,33 @@ export default class SceneEntryManager {
   _setupMedia = () => {
     const offset = { x: 0, y: 0, z: -1.5 };
     const spawnMediaInfrontOfPlayer = (src, contentOrigin) => {
-      if (!this.hubChannel.can("spawn_and_move_media")) return;
+      // if (!this.hubChannel.can("spawn_and_move_media")) return;
       const { entity, orientation } = addMedia(
         src,
-        "#interactable-media",
+        '#interactable-media',
         contentOrigin,
         null,
         !(src instanceof MediaStream),
-        true
+        true,
+        true,
+        {}
       );
-      orientation.then(or => {
-        entity.setAttribute("offset-relative-to", {
-          target: "#avatar-pov-node",
+
+      orientation.then((or) => {
+        entity.setAttribute('offset-relative-to', {
+          target: '#avatar-pov-node',
           offset,
-          orientation: or
+          orientation: or,
         });
       });
 
       return entity;
     };
 
-    this.scene.addEventListener("add_media", e => {
-      const contentOrigin = e.detail instanceof File ? ObjectContentOrigins.FILE : ObjectContentOrigins.URL;
-
-      spawnMediaInfrontOfPlayer(e.detail, contentOrigin);
+    this.scene.addEventListener('add_media', (e) => {
+      const contentOrigin = e.detail.file instanceof File ? ObjectContentOrigins.FILE : ObjectContentOrigins.URL;
+      console.log({contentOrigin})
+      spawnMediaInfrontOfPlayer(e.detail.file, contentOrigin);
     });
 
     this.scene.addEventListener("object_spawned", e => {
