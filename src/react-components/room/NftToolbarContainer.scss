@@ -1,0 +1,129 @@
+:local(.nft-container) {
+    background-color: #fff;
+    border: 1px solid #D7D7D7;
+    border-radius: 20px;
+
+    max-width: 900px;
+    width: 100%;
+    max-height: 700px;
+    height: 100%;
+    padding: 40px 40px 80px;
+
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    bottom: 0;
+    right: 0;
+    transform: translate(-50%, -50%);
+
+    z-index: 999;
+
+    @media (max-width: 600px) {
+        border-radius: 0;
+        border: none;
+        max-height: none;
+        max-width: none;
+        top: 0;
+        left: 0;
+        transform: none;
+    }
+}
+
+:local(.nft-content) {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-width: 680px;
+    margin: 0 auto;
+}
+
+:local(.loader) {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+:local(.nft-btn-close) {
+    background: transparent;
+    border: none;
+    transition: all 0.2s linear;
+
+    position: absolute;
+    top: 38px;
+    left: 70px;
+
+    @media (max-width: 600px) {
+        left: 38px;
+    }
+
+    svg {
+        *[stroke=\#000] {
+            transition: stroke 0.2s linear;
+        }
+
+        *[fill=\#000] {
+            transition: fill 0.2s linear;
+        }
+    }
+
+    &:hover {
+        svg {
+            *[stroke=\#000] {
+                stroke: #0D75FE;
+            }
+
+            *[fill=\#000] {
+                fill: #0D75FE;
+            }
+        }
+    }
+}
+
+:local(.nft-heading) {
+    color: #1F1F2C;
+    font-weight: 700;
+    font-size: 17px;
+    line-height: 22px;
+    margin: 0;
+    text-align: center;
+}
+
+:local(.nft-tabs) {
+    display: flex;
+    justify-content: space-between;
+    margin: 37px 0 47px;
+}
+
+:local(.select-tabs-item) {
+    border: 1px solid transparent;
+    border-radius: 15px;
+    color: #1F1F2C;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 22px;
+    padding: 11px 34px;
+    transition: border 0.2s linear;
+
+    @media (max-width: 600px) {
+        padding: 11px 20px;
+    }
+
+    &:hover {
+        border-color: #1F1F2C;
+    }
+
+    &:local(.disabled) {
+        background-color: #c8c8c8;
+        cursor: not-allowed;
+
+        &:hover {
+            border-color: transparent;
+        }
+    }
+}
+
+:local(.active-tab) {
+    border-color: #1F1F2C;
+}

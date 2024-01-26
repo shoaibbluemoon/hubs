@@ -1,0 +1,68 @@
+@use "../../../styles/theme.scss";
+
+:local(.followingContainer) {
+  display: flex;
+  justify-content: center;
+  padding: 20px 29px;
+  border: 1px solid #EAEAEA;
+  border-radius: 12px;
+  margin: 24px 0;
+}
+
+:local(.followingContent) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2px 0;
+
+  &:first-child {
+    border-right-width: 1px;
+    border-right-color: #EAEAEA;
+    border-right-style: solid;
+    padding-right: 26.5px;
+  }
+
+  &:last-child {
+    padding-left: 26.5px;
+  }
+}
+
+:local(.followingNumber) {
+  font-weight: 600;
+  font-size: 16px;
+  color: #343434;
+  padding-right: 5px;
+}
+
+:local(.followingText) {
+  font-weight: 500;
+  font-size: 16px;
+  text-align: center;
+  color: #B8BFCA;
+}
+
+@media (max-width: 450px) {
+  :local(.followingContainer) {
+    display: flex;
+    flex-direction: column;
+    margin: 24px 0;
+    padding: 0;
+    border: 0;
+  }
+
+  :local(.followingContent) {
+    border: 1px solid #EAEAEA;
+    border-radius: 12px;
+    padding: 10px;
+
+    &:first-child {
+      margin-bottom: 5px;
+      padding-right: 10px;
+    }
+
+    &:last-child {
+      margin-bottom: 5px;
+      padding-left: 10px;
+    }
+  }
+}

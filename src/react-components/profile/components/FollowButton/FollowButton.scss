@@ -1,0 +1,32 @@
+@use "../../../styles/theme.scss";
+
+:local(.followButton) {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 14px 30px;
+  background: linear-gradient(89.93deg, #3553D5 50.15%, #0C194E 217.12%);
+  border-radius: 50px;
+  border: 0;
+
+  transition: ease background .3s;
+
+  &:hover {
+    background: linear-gradient(89.93deg, #1b3abe 50.15%, #030f3d 217.12%);
+  }
+}
+
+:local(.followIcon) {
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+
+:local(.followButtonText) {
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  text-align: center;
+  color: theme.$white;
+}

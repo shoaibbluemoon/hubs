@@ -1,0 +1,94 @@
+@use "../../../styles/theme.scss";
+
+:local(.bio) {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+:local(.bioContent) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+:local(.avatarContainer) {
+  position: relative;
+}
+
+:local(.avatar) {
+  width: 109px;
+  height: 109px;
+  border-radius: 50%;
+  border: 3px solid #3456D0;
+}
+
+:local(.verifyIcon) {
+  position: absolute;
+  right: -6px;
+  bottom: 16px;
+
+  svg {
+    stroke: none;
+  }
+}
+
+:local(.name) {
+  font-weight: 600;
+  font-size: 24px;
+  margin-bottom: 3px;
+  text-align: center;
+}
+
+:local(.walletAddress) {
+  width: fit-content;
+  font-weight: 600;
+  font-size: 14px;
+  color: #3456D0;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  border: 1px solid #E5EBFF;
+  border-radius: 7px;
+}
+
+:local(.registrationDate) {
+  font-weight: 600;
+  font-size: 12px;
+  text-align: center;
+  text-transform: uppercase;
+  color: #A9A9A9;
+  margin-bottom: 6px;
+}
+
+:local(.statusContainer) {
+  display: flex;
+  justify-content: center;
+  margin-top: 22px;
+}
+
+:local(.status) {
+  width: 273px;
+  font-weight: 500;
+  font-size: 12px;
+  text-align: center;
+  color: #A9A9A9;
+}
+
+@media (max-width: 991px) {
+  :local(.bio) {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 450px) {
+  :local(.bio) {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  :local(.status) {
+    width: 100%;
+  }
+}

@@ -1,0 +1,94 @@
+@use "../../../styles/theme";
+
+:local(.badgesContainer) {
+  margin-top: 28.5px;
+}
+
+:local(.listOfItemsText) {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  & > span:first-child {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+    font-size: 16px;
+    color: #343434;
+  }
+
+  & > button {
+    background-color: transparent;
+    border: 0;
+    font-weight: 600;
+    font-size: 12px;
+    text-align: center;
+    text-transform: uppercase;
+    color: #3456D0;
+    cursor: pointer;
+
+    transition: ease color .3s;
+
+    &:hover {
+      color: #0C194E
+    }
+  }
+}
+
+:local(.badge) {
+  max-width: 70px;
+  max-height: 70px;
+}
+
+:local(.badges) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 7.9%;
+  margin-top: 23px;
+  height: 70px;
+  overflow: hidden;
+}
+
+:local(.openedBadges) {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  column-gap: 7.9%;
+  row-gap: 15px;
+  margin-top: 23px;
+  height: auto;
+  overflow: visible;
+}
+
+:local(.badgeWrapper) {
+  position: relative;
+}
+
+:local(.badgesQuantity) {
+  position: absolute;
+  top: 65%;
+  right: 0;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  background: linear-gradient(180deg, #6CD6FD -69.51%, #3359FF 100%);
+}
+
+:local(.badgesQuantityText) {
+  color: #FFFFFF;
+}
+
+@media (max-width: 450px) {
+  :local(.badges) {
+    column-gap: 8.9%;
+  }
+
+  :local(.openBadges) {
+    //column-gap: 8.9%;
+  }
+}

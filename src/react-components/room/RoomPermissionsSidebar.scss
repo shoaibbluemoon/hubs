@@ -1,0 +1,25 @@
+:local(.room-permissions-child-inputs-container) {
+    padding-left: 20px;
+}
+
+:local(.room-permissions-child-token) {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 16px;
+    margin-left: 16px;
+}
+
+:local(.room-permissions-child-token-label) {
+    color: #868686;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+:local(.room-permissions-child-token-input) {
+    border-radius: 15px;
+    border: 2px solid black;
+    color: #868686;
+    font-size: 12px;
+    padding: 8px 16px;
+}

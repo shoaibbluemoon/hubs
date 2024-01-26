@@ -1,0 +1,57 @@
+:local(.rankContainer) {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 12px;
+  width: 100%;
+  height: 74px;
+  padding: 12px;
+}
+
+:local(.diamondRank) {
+  background: linear-gradient(180deg, #66D3FF 0%, #0078B6 100%), linear-gradient(180deg, #F9A51C 0%, #E11551 146.53%);
+}
+
+:local(.legendaryRank) {
+  background: linear-gradient(180deg, #F9A51C 0%, #E11551 146.53%);
+}
+
+:local(.platinumRank) {
+  background: linear-gradient(180deg, #C0A6FF 0%, #6142AA 100%);
+}
+
+:local(.goldenRank) {
+  background: linear-gradient(180deg, #FECC35 0%, #FF9100 100%);
+}
+
+:local(.silverRank) {
+  background: linear-gradient(180deg, #000000 0%, #A3A3A3 100%);
+}
+
+:local(.rankIcon) {
+  width: 50px;
+  height: 50px;
+}
+
+:local(.rankTextWrapper) {
+  height: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+:local(.rankTitle) {
+  font-weight: 600;
+  font-size: 10px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+:local(.rankText) {
+  font-weight: 700;
+  font-size: 16px;
+  text-transform: uppercase;
+  text-align: center;
+  color: #FFFFFF;
+}
