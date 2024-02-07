@@ -17,7 +17,7 @@ export const CAPTCHA_API_KEY = '6LcX7g8hAAAAALu89pr9Uz32fYX-DpDFlzYkWb_o';
 
 // for asmetaverse
 // export const DOMAIN = 'https://asmetaverse.click/';
-export const DOMAIN = 'https://bluemoonmeta.com/';
+export const DOMAIN = 'https://bluemoon.land/';
 // for spaces
 // export const DOMAIN = 'https://spaces.bluemoon.io/';
 

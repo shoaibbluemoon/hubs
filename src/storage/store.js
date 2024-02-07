@@ -10,7 +10,7 @@ export const LOCAL_STORE_VALUE = {
   credentials: {
     email: 'admin@bluemoon.io',
     token:
-      'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJibHVlbW9vbi5sYW5kIiwiZXhwIjoxNzEyNzM2MTEyLCJpYXQiOjE3MDU0Nzg1MTIsImlzcyI6ImJsdWVtb29uLmxhbmQiLCJqdGkiOiIzOGVmYzY4My1hOWE3LTQ3NjYtYmJkOS04MGQ5NDQ3NWJiZGEiLCJuYmYiOjE3MDU0Nzg1MTEsInN1YiI6IjE2NzU4MTI5NTI4NjQ3MTg4NTAiLCJ0eXAiOiJhY2Nlc3MifQ.31rosDey3ylONuh8iaBFvrSJ7-MmFgsREVnE38SR3-6FB_jWfS8CGcHm_uApUu0xNkoiKbMHkCNRkIgLPUNweA',
+      'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJibHVlbW9vbi5sYW5kIiwiZXhwIjoxNzE0MTQwMjkxLCJpYXQiOjE3MDY4ODI2OTEsImlzcyI6ImJsdWVtb29uLmxhbmQiLCJqdGkiOiIwNmEyOTU1Yi03Y2FiLTQ5MjAtODZkNC1lNmY0N2Q0NjMwNWMiLCJuYmYiOjE3MDY4ODI2OTAsInN1YiI6IjE2ODc1OTIwNjE2NTEzODYzNzAiLCJ0eXAiOiJhY2Nlc3MifQ.lGJVeOLEgVdOV0f-5K4gsVv71wEetwfih7C9jxPNfR0ur0vAdSuwNDXx9Pgm_WGk_MOFlnkxhMitwNGmvNaP4w',
   },
 };
 
@@ -22,6 +22,7 @@ import { EventTarget } from "event-target-shim";
 import { fetchRandomDefaultAvatarId, generateRandomName } from "../utils/identity.js";
 import { NO_DEVICE_ID } from "../utils/media-devices-utils.js";
 import { AAModes } from "../constants";
+import { vision } from '../vision/visionUtils';
 
 const defaultMaterialQuality = (function () {
   const MATERIAL_QUALITY_OPTIONS = ["low", "medium", "high"];
@@ -256,7 +257,7 @@ export const SCHEMA = {
 export default class Store extends EventTarget {
   constructor(isCheckAdmin = false) {
     super();
-
+    
     if (isCheckAdmin) {
       this.checkAdmin();
     }
