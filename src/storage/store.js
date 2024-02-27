@@ -8,12 +8,11 @@ import detectMobile, { isAndroid, isMobileVR } from "../utils/is-mobile";
 const LOCAL_STORE_KEY = "___hubs_store";
 export const LOCAL_STORE_VALUE = {
   credentials: {
-    email: 'admin@bluemoon.io',
+    email: "admin@bluemoon.io",
     token:
-      'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJibHVlbW9vbi5sYW5kIiwiZXhwIjoxNzE1NTk4NTQ2LCJpYXQiOjE3MDgzNDA5NDYsImlzcyI6ImJsdWVtb29uLmxhbmQiLCJqdGkiOiJhN2Q3ZGVlMC1mNWY4LTQyNDAtOGM0ZC1lMWI1NjE5NjMyYmYiLCJuYmYiOjE3MDgzNDA5NDUsInN1YiI6IjE2OTc3MTAwNTYwMDg1ODExMjIiLCJ0eXAiOiJhY2Nlc3MifQ.0KqJCBpiWl_YSRh10L9BlFYPrmlJzJd15J1kwqr6kuAj8sxvN49HbnkSnEDlz4lEnQOs_NiGgdgtV5qBDQ8W3Q',
-  },
+      "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJibHVlbW9vbi5sYW5kIiwiZXhwIjoxNzE1NTk4NTQ2LCJpYXQiOjE3MDgzNDA5NDYsImlzcyI6ImJsdWVtb29uLmxhbmQiLCJqdGkiOiJhN2Q3ZGVlMC1mNWY4LTQyNDAtOGM0ZC1lMWI1NjE5NjMyYmYiLCJuYmYiOjE3MDgzNDA5NDUsInN1YiI6IjE2OTc3MTAwNTYwMDg1ODExMjIiLCJ0eXAiOiJhY2Nlc3MifQ.0KqJCBpiWl_YSRh10L9BlFYPrmlJzJd15J1kwqr6kuAj8sxvN49HbnkSnEDlz4lEnQOs_NiGgdgtV5qBDQ8W3Q"
+  }
 };
-
 
 const STORE_STATE_CACHE_KEY = Symbol();
 const OAUTH_FLOW_CREDENTIALS_KEY = "ret-oauth-flow-account-credentials";
@@ -22,7 +21,8 @@ import { EventTarget } from "event-target-shim";
 import { fetchRandomDefaultAvatarId, generateRandomName } from "../utils/identity.js";
 import { NO_DEVICE_ID } from "../utils/media-devices-utils.js";
 import { AAModes } from "../constants";
-import { vision } from '../vision/visionUtils';
+import { vision } from "../vision/visionUtils";
+import { getCurrentHubId } from "../utils/hub-utils.js";
 
 const defaultMaterialQuality = (function () {
   const MATERIAL_QUALITY_OPTIONS = ["low", "medium", "high"];
@@ -257,9 +257,9 @@ export const SCHEMA = {
 export default class Store extends EventTarget {
   constructor(isCheckAdmin = false) {
     super();
-    
+
     if (isCheckAdmin) {
-      this.checkAdmin();
+      // this.checkAdmin();
     }
 
     this._preferences = {};
@@ -324,19 +324,18 @@ export default class Store extends EventTarget {
 
   checkAdmin = async () => {
     const qs = new URLSearchParams(location.search);
-       
-    
-      const hubId =
-          qs.get("hub_id")
-    if(hubId){
+
+    // const hubId = qs.get("hub_id");
+    const hubId = getCurrentHubId();
+
+    if (hubId) {
       const isAdmin = await vision.api.checkUserAdmin();
       if (isAdmin) {
         this.update(LOCAL_STORE_VALUE);
       } else {
         this.update({ credentials: { token: null, email: null } });
       }
-
-    }        
+    }
   };
 
   initProfile = async () => {
@@ -457,7 +456,7 @@ export default class Store extends EventTarget {
       }
       this._preferences = finalState.preferences;
     }
-    console.log("store", finalState)
+    console.log("store", finalState);
     localStorage.setItem(LOCAL_STORE_KEY, JSON.stringify(finalState));
     delete this[STORE_STATE_CACHE_KEY];
 

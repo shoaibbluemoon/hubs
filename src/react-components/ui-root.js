@@ -4,7 +4,7 @@ import classNames from "classnames";
 import copy from "copy-to-clipboard";
 import { FormattedMessage } from "react-intl";
 import screenfull from "screenfull";
-import { ButtonContext } from '../context/ButtonContext';
+import { ButtonContext } from "../context/ButtonContext";
 
 import configs from "../utils/configs";
 import { VR_DEVICE_AVAILABILITY } from "../utils/vr-caps-detect";
@@ -70,15 +70,15 @@ import { ReactComponent as VRIcon } from "./icons/VR.svg";
 import { ReactComponent as LeaveIcon } from "./icons/Leave.svg";
 import { ReactComponent as EnterIcon } from "./icons/Enter.svg";
 import { ReactComponent as InviteIcon } from "./icons/Invite.svg";
-import { ReactComponent as SettingsNewIcon } from './icons/Settings-new.svg';
-import { ReactComponent as ControlsNewIcon } from './icons/Controls-new.svg';
-import { ReactComponent as InfoNewIcon } from './icons/Info-new.svg';
-import { ReactComponent as ExitNewIcon } from './icons/Exit-new.svg';
+import { ReactComponent as SettingsNewIcon } from "./icons/Settings-new.svg";
+import { ReactComponent as ControlsNewIcon } from "./icons/Controls-new.svg";
+import { ReactComponent as InfoNewIcon } from "./icons/Info-new.svg";
+import { ReactComponent as ExitNewIcon } from "./icons/Exit-new.svg";
 import { PeopleSidebarContainer, userFromPresence } from "./room/PeopleSidebarContainer";
 import { ObjectListProvider } from "./room/useObjectList";
 import { ObjectsSidebarContainer } from "./room/ObjectsSidebarContainer";
 import { ObjectMenuContainer } from "./room/ObjectMenuContainer";
-import { VoiceButtonContainer } from './room/VoiceButtonContainer';
+import { VoiceButtonContainer } from "./room/VoiceButtonContainer";
 import { useCssBreakpoints } from "react-use-css-breakpoints";
 import { PlacePopoverContainer } from "./room/PlacePopoverContainer";
 import { SharePopoverContainer } from "./room/SharePopoverContainer";
@@ -86,8 +86,8 @@ import { AudioPopoverContainer } from "./room/AudioPopoverContainer";
 import { ReactionPopoverContainer } from "./room/ReactionPopoverContainer";
 import { SafariMicModal } from "./room/SafariMicModal";
 import { RoomSignInModalContainer } from "./auth/RoomSignInModalContainer";
-import { NftToolbarContainer } from './room/NftToolbarContainer';
-import { removeNetworkedObject } from '../utils/removeNetworkedObject';
+import { NftToolbarContainer } from "./room/NftToolbarContainer";
+import { removeNetworkedObject } from "../utils/removeNetworkedObject";
 import { SignInStep } from "./auth/SignInModal";
 import { LeaveReason, LeaveRoomModal } from "./room/LeaveRoomModal";
 import { RoomSidebar } from "./room/RoomSidebar";
@@ -106,19 +106,20 @@ import { TERMS, PRIVACY } from "../constants";
 import { ECSDebugSidebarContainer } from "./debug-panel/ECSSidebar";
 import { NotificationsContainer } from "./room/NotificationsContainer";
 import { usePermissions } from "./room/usePermissions";
-import { vision } from '../vision/visionUtils';
-import { ResizeRotate } from './room/ResizeRotate';
-import { RoomPermissionsSidebar } from './room/RoomPermissionsSidebar';
-import { SidebarBuy } from './sidebar/SidebarBuy';
-import { Theme } from '../context/ThemeContext';
-import { ThemeProvider } from 'styled-components';
-import { getElementUrl, getObjectUrl } from './room/object-hooks';
-import { DeletedWarningText } from './room/DeletedWarningText';
-import { CountDownTimer } from './room/CountDownTimer';
-import { LiveStreamContainer } from './room/LiveStreamContainer';
+import { vision } from "../vision/visionUtils";
+import { ResizeRotate } from "./room/ResizeRotate";
+import { RoomPermissionsSidebar } from "./room/RoomPermissionsSidebar";
+import { SidebarBuy } from "./sidebar/SidebarBuy";
+import { Theme } from "../context/ThemeContext";
+import { ThemeProvider } from "styled-components";
+import { getElementUrl, getObjectUrl } from "./room/object-hooks";
+import { DeletedWarningText } from "./room/DeletedWarningText";
+import { CountDownTimer } from "./room/CountDownTimer";
+import { LiveStreamContainer } from "./room/LiveStreamContainer";
 
-import { sharingEnabled, spectateEnabled, videoSharingEnabled } from '../vision/config/visFeatureConfig';
-import { checkUserNft, getAsset, iframeURL, removeNftOwner, roomAssetsList } from '../utils/api';
+import { sharingEnabled, spectateEnabled, videoSharingEnabled } from "../vision/config/visFeatureConfig";
+import { checkUserNft, getAsset, iframeURL, removeNftOwner, roomAssetsList } from "../utils/api";
+import { getCurrentHubId } from "../utils/hub-utils";
 
 const avatarEditorDebug = qsTruthy("avatarEditorDebug");
 
@@ -232,18 +233,18 @@ class UIRoot extends Component {
     saledNFTS: [],
 
     timer: timerValue,
-    deletedObject: null,
+    deletedObject: null
   };
 
   constructor(props) {
     const qs = new URLSearchParams(location.search);
-    const hubId =qs.get("hub_id")
-    console.log("ui-root", hubId)
-    
-    vision.api.checkUserAdmin();
+    // const hubId = qs.get("hub_id");
+    const hubId = getCurrentHubId();
+    console.log("ui-root-hubid", hubId);
+    if (hubId) {
+      vision.api.checkUserAdmin();
+    }
     super(props);
-
-    
 
     props.mediaSearchStore.setHistory(props.history);
 
@@ -325,35 +326,34 @@ class UIRoot extends Component {
       this.timerId.current = null;
       window.APP.entryManager._unpinElement(this.state.deletedObject);
     }
-    console.log({'prop obj': this.props.activeObject})
+    console.log({ "prop obj": this.props.activeObject });
     if (this.props.activeObject && this.props.activeObject.id !== this.state.objectId) {
       const assetUrl = getObjectUrl(this.props.activeObject);
       const qs = new URLSearchParams(location.search);
-      const defaultRoomId = configs.feature('default_room_id');
+      const defaultRoomId = configs.feature("default_room_id");
       const hubId =
-        qs.get('hub_id') ||
-        (document.location.pathname === '/' && defaultRoomId
+        qs.get("hub_id") ||
+        (document.location.pathname === "/" && defaultRoomId
           ? defaultRoomId
-          : document.location.pathname.substring(1).split('/')[0]);
+          : document.location.pathname.substring(1).split("/")[0]);
 
       getAsset(assetUrl)
-        .then((assetInfo) => {
-          console.log({assetInfo})
+        .then(assetInfo => {
+          console.log({ assetInfo });
           window.APP.store.asset = {
             modelurl: assetInfo.ASSETSTORAGEREF,
             roomid: hubId,
-            isNft: assetInfo.ASSET_TYPE === 'nft',
+            isNft: assetInfo.ASSET_TYPE === "nft"
           };
-          this.setState({ sidebarBuyOpened: assetInfo.ASSET_TYPE === 'nft', objectId: this.props.activeObject.id });
+          this.setState({ sidebarBuyOpened: assetInfo.ASSET_TYPE === "nft", objectId: this.props.activeObject.id });
         })
         .catch(() => {
           this.setState({ sidebarBuyOpened: false, objectId: this.props.activeObject.id });
         });
     }
-
   }
 
-  onDeleteSelectedObject = (object) => {
+  onDeleteSelectedObject = object => {
     this.setState({ deletedObject: object });
 
     const timerTick = () => {
@@ -483,54 +483,58 @@ class UIRoot extends Component {
     this.playerRig = scene.querySelector("#avatar-rig");
 
     scene.addEventListener("action_media_tweet", this.onTweet);
-    
-    const qs = new URLSearchParams(location.search);
-    const defaultRoomId = configs.feature('default_room_id');
-    const hubId =
-      qs.get('hub_id') ||
-      (document.location.pathname === '/' && defaultRoomId
-        ? defaultRoomId
-        : document.location.pathname.substring(1).split('/')[0]);
 
-    const walletId = qs.get('walletId');
+    const qs = new URLSearchParams(location.search);
+    const defaultRoomId = configs.feature("default_room_id");
+    const hubId =
+      qs.get("hub_id") ||
+      (document.location.pathname === "/" && defaultRoomId
+        ? defaultRoomId
+        : document.location.pathname.substring(1).split("/")[0]);
+
+    const walletId = qs.get("walletId");
     let usersWalletNft = [];
 
     if (vision.api.isAdmin && walletId) {
       usersWalletNft = await checkUserNft(walletId);
-      usersWalletNft = usersWalletNft.filter((nftInfo) => nftInfo.from === walletId).map((nftInfo) => ({
-        tokenName: nftInfo.tokenName,
-        contractAddress: nftInfo.contractAddress,
-        tokenID: nftInfo.tokenID,
-      }));
+      usersWalletNft = usersWalletNft
+        .filter(nftInfo => nftInfo.from === walletId)
+        .map(nftInfo => ({
+          tokenName: nftInfo.tokenName,
+          contractAddress: nftInfo.contractAddress,
+          tokenID: nftInfo.tokenID
+        }));
     }
 
     const assetsList = await roomAssetsList(hubId);
-    let assetsListUrl = assetsList.map((item) => item.ASSETSTORAGEREF);
+    let assetsListUrl = assetsList.map(item => item.ASSETSTORAGEREF);
 
     if (usersWalletNft.length) {
-      const assetsListNft = assetsList.filter((asset) => asset.ASSET_TYPE === 'nft').map((asset) => ({
-        NAME: asset.NAME,
-        ASSETSTORAGEREF: asset.ASSETSTORAGEREF,
-        ITEM_ADDRESS: asset.ITEM_ADDRESS,
-      }));
+      const assetsListNft = assetsList
+        .filter(asset => asset.ASSET_TYPE === "nft")
+        .map(asset => ({
+          NAME: asset.NAME,
+          ASSETSTORAGEREF: asset.ASSETSTORAGEREF,
+          ITEM_ADDRESS: asset.ITEM_ADDRESS
+        }));
 
       for (let i = 0; i < assetsListNft.length; i++) {
         const asset = assetsListNft[i];
         const isAssetInList = usersWalletNft.some(
-          (nft) =>
-            nft.contractAddress === asset.ITEM_ADDRESS.split(':')[1] && nft.tokenID === asset.ITEM_ADDRESS.split(':')[2]
+          nft =>
+            nft.contractAddress === asset.ITEM_ADDRESS.split(":")[1] && nft.tokenID === asset.ITEM_ADDRESS.split(":")[2]
         );
 
         if (isAssetInList) {
           await removeNftOwner(asset.ASSETSTORAGEREF);
-          assetsListUrl = assetsListUrl.filter((url) => url !== asset.ASSETSTORAGEREF);
+          assetsListUrl = assetsListUrl.filter(url => url !== asset.ASSETSTORAGEREF);
         }
       }
     }
 
-    const objectsInScene = await new Promise((resolve) => {
+    const objectsInScene = await new Promise(resolve => {
       setTimeout(() => {
-        resolve(document.querySelectorAll('.interactable'));
+        resolve(document.querySelectorAll(".interactable"));
       }, 5000);
     });
 
@@ -539,7 +543,7 @@ class UIRoot extends Component {
         const object = objectsInScene[i];
         const url = getElementUrl(object);
 
-        const isAssetInList = assetsListUrl.some((assetUrl) => assetUrl === url);
+        const isAssetInList = assetsListUrl.some(assetUrl => assetUrl === url);
         // const isAssetInList = assetsListUrl.includes(url);
 
         if (!isAssetInList) {
@@ -553,8 +557,6 @@ class UIRoot extends Component {
       }
     }
   }
-
-
 
   UNSAFE_componentWillMount() {
     this.props.store.addEventListener("statechanged", this.storeUpdated);
@@ -943,7 +945,7 @@ class UIRoot extends Component {
     });
   }
 
-  handleNFTSale = (name) => {
+  handleNFTSale = name => {
     this.setState({ saledNFTS: [...this.state.saledNFTS, name] });
   };
 
@@ -988,27 +990,27 @@ class UIRoot extends Component {
       <>
         <RoomEntryModal
           store={this.props.store}
-          appName={configs.translation('app-name')}
-          logoSrc={configs.image('logo')}
+          appName={configs.translation("app-name")}
+          logoSrc={configs.image("logo")}
           roomName={this.props.hub.name}
           showJoinRoom={!this.state.waitingOnAudio && !this.props.entryDisallowed}
           onJoinRoom={() => {
             if (!this.props.forcedVREntryType) {
               this.setState({ entering: true });
               this.props.hubChannel.sendEnteringEvent();
-              this.pushHistoryState('entry_step', 'profile');
+              this.pushHistoryState("entry_step", "profile");
               this.props.store.update({
                 profile: {
-                  displayName: localStorage.getItem('userName'),
-                  avatarId: this.props.store.state.profile.avatarId,
-                },
+                  displayName: localStorage.getItem("userName"),
+                  avatarId: this.props.store.state.profile.avatarId
+                }
               });
             } else {
               this.props.store.update({
                 profile: {
-                  displayName: localStorage.getItem('userName'),
-                  avatarId: this.props.store.state.profile.avatarId,
-                },
+                  displayName: localStorage.getItem("userName"),
+                  avatarId: this.props.store.state.profile.avatarId
+                }
               });
               this.handleForceEntry();
             }
@@ -1017,11 +1019,11 @@ class UIRoot extends Component {
           onEnterOnDevice={() => this.attemptLink()}
           showSpectate={spectateEnabled}
           onSpectate={() => this.setState({ watching: true })}
-          showOptions={this.props.hubChannel.can('update_hub')}
+          showOptions={this.props.hubChannel.can("update_hub")}
           onOptions={() => {
             this.props.performConditionalSignIn(
-              () => this.props.hubChannel.can('update_hub'),
-              () => this.setSidebar('room-settings'),
+              () => this.props.hubChannel.can("update_hub"),
+              () => this.setSidebar("room-settings"),
               SignInMessages.roomSettings
             );
           }}
@@ -1289,35 +1291,35 @@ class UIRoot extends Component {
 
     const moreMenu = [
       {
-        id: 'user',
-        label: 'You',
+        id: "user",
+        label: "You",
         items: [
           {
-            id: 'preferences',
-            label: 'Preferences',
+            id: "preferences",
+            label: "Preferences",
             icon: SettingsNewIcon,
-            onClick: () => this.setState({ showPrefs: true }),
+            onClick: () => this.setState({ showPrefs: true })
           },
           {
-            id: 'controls',
-            label: 'Controls',
+            id: "controls",
+            label: "Controls",
             icon: ControlsNewIcon,
-            onClick: () => this.setState({ showControls: true }),
-          },
-        ].filter((item) => item),
+            onClick: () => this.setState({ showControls: true })
+          }
+        ].filter(item => item)
       },
       {
-        id: 'room',
+        id: "room",
         label: <FormattedMessage id="more-menu.room" defaultMessage="Room" />,
         items: [
           {
-            id: 'room-info',
+            id: "room-info",
             label: <FormattedMessage id="more-menu.room-info" defaultMessage="Room Info And Settings" />,
             icon: InfoNewIcon,
             onClick: () => {
-              if (!vision.api.isAdmin) this.setSidebar('room-info');
-              else this.setSidebar('room-info-settings');
-            },
+              if (!vision.api.isAdmin) this.setSidebar("room-info");
+              else this.setSidebar("room-info-settings");
+            }
           },
           // {
           //   id: 'room-permissions',
@@ -1327,35 +1329,35 @@ class UIRoot extends Component {
           //     this.setSidebar('room-permissions-page');
           //   },
           // },
-          (this.props.breakpoint === 'sm' || this.props.breakpoint === 'md') &&
+          (this.props.breakpoint === "sm" || this.props.breakpoint === "md") &&
             // (this.props.hub.entry_mode !== "invite" || this.props.hubChannel.can("update_hub")) && sharingEnabled && vision.api.isAdmin && {
             //   id: "invite",
             //   label: <FormattedMessage id="more-menu.invite" defaultMessage="Invite" />,
             //   icon: InviteIcon,
             //   onClick: () => this.props.scene.emit("action_invite")
             // },
-            (this.props.breakpoint === 'sm' || this.props.breakpoint === 'md') &&
+            (this.props.breakpoint === "sm" || this.props.breakpoint === "md") &&
             entered && {
-              id: 'leave-room',
+              id: "leave-room",
               label: <FormattedMessage id="more-menu.enter-leave-room" defaultMessage="Leave Room" />,
               icon: LeaveIcon,
               onClick: () => {
                 this.showNonHistoriedDialog(LeaveRoomModal, {
-                  destinationUrl: '/',
-                  reason: LeaveReason.leaveRoom,
+                  destinationUrl: "/",
+                  reason: LeaveReason.leaveRoom
                 });
-              },
-            },
-        ].filter((item) => item),
-      },
+              }
+            }
+        ].filter(item => item)
+      }
     ];
 
     const sideBarShow =
       this.props.activeObject &&
       this.state.sidebarBuyOpened &&
-      this.props.activeObject.el.components['media-loader'] &&
-      !this.props.activeObject.el.components['media-loader'].data.src.startsWith('hubs://') &&
-      !this.props.activeObject.el.components['media-loader'].data.src.includes('youtube.com');
+      this.props.activeObject.el.components["media-loader"] &&
+      !this.props.activeObject.el.components["media-loader"].data.src.startsWith("hubs://") &&
+      !this.props.activeObject.el.components["media-loader"].data.src.includes("youtube.com");
 
     return (
       <MoreMenuContextProvider>
@@ -1466,15 +1468,14 @@ class UIRoot extends Component {
                         object={this.props.activeObject}
                       />
                     )}
-                    {this.props.activeObject &&
-                      vision.api.isAdmin && (
-                        <ResizeRotate
-                          object={this.props.activeObject}
-                          hubChannel={this.props.hubChannel}
-                          scene={this.props.scene}
-                          isSidebarOpen={this.state.sidebarBuyOpened}
-                        />
-                      )}
+                    {this.props.activeObject && vision.api.isAdmin && (
+                      <ResizeRotate
+                        object={this.props.activeObject}
+                        hubChannel={this.props.hubChannel}
+                        scene={this.props.scene}
+                        isSidebarOpen={this.state.sidebarBuyOpened}
+                      />
+                    )}
                     {!entered && !streaming && !isMobile && streamerName && <SpectatingLabel name={streamerName} />}
                     {/* {this.props.activeObject && (
                       <ObjectMenuContainer
@@ -1626,7 +1627,7 @@ class UIRoot extends Component {
                           onChangeScene={this.onChangeScene}
                         />
                       )}
-                      {this.state.sidebarId === 'room-permissions-page' && (
+                      {this.state.sidebarId === "room-permissions-page" && (
                         <RoomPermissionsSidebar onClose={() => this.setSidebar(null)} />
                       )}
                       {this.state.sidebarId === "room-settings" && (
@@ -1674,27 +1675,27 @@ class UIRoot extends Component {
                     )}
                     {entered && (
                       <>
-                      <VoiceButtonContainer
-                        scene={this.props.scene}
-                        microphoneEnabled={this.mediaDevicesManager.isMicShared}
-                      />
-                      {/*{videoSharingEnabled && (<SharePopoverContainer scene={this.props.scene} hubChannel={this.props.hubChannel} />)}*/}
-                      {/* ITEM PLACING */}
-                      {/* <PlacePopoverContainer
+                        <VoiceButtonContainer
+                          scene={this.props.scene}
+                          microphoneEnabled={this.mediaDevicesManager.isMicShared}
+                        />
+                        {/*{videoSharingEnabled && (<SharePopoverContainer scene={this.props.scene} hubChannel={this.props.hubChannel} />)}*/}
+                        {/* ITEM PLACING */}
+                        {/* <PlacePopoverContainer
                         scene={this.props.scene}
                         hubChannel={this.props.hubChannel}
                         mediaSearchStore={this.props.mediaSearchStore}
                         showNonHistoriedDialog={this.showNonHistoriedDialog}
                       /> */}
-                      {false && <ReactionPopoverContainer />}
-                    </>
+                        {false && <ReactionPopoverContainer />}
+                      </>
                     )}
 
                     {entered && vision.api.isAdmin && <NftToolbarContainer scene={this.props.scene} />}
 
                     {(vision.api.isAdmin || (window.APP.isAuthorized && !window.APP.isMessagingBanned)) &&
                       Number(window.APP?.rank) > 1 && (
-                        <ChatToolbarButtonContainer onClick={() => this.toggleSidebar('chat')} />
+                        <ChatToolbarButtonContainer onClick={() => this.toggleSidebar("chat")} />
                       )}
                     {entered && isMobileVR && (
                       <ToolbarButton
@@ -1743,13 +1744,13 @@ class UIRoot extends Component {
 }
 
 export const darkTheme = {
-  backgroundColor: '#0e1526',
-  textColor: '#fcfcfd',
+  backgroundColor: "#0e1526",
+  textColor: "#fcfcfd"
 };
 
 export const lightTheme = {
-  backgroundColor: '#fff',
-  textColor: '#777E90',
+  backgroundColor: "#fff",
+  textColor: "#777E90"
 };
 
 function UIRootHooksWrapper(props) {
@@ -1757,7 +1758,7 @@ function UIRootHooksWrapper(props) {
   const breakpoint = useCssBreakpoints();
   const { voice_chat: canVoiceChat } = usePermissions();
   const [button, setButton] = useState(false);
-  const [theme, setTheme] = useState(window.localStorage.getItem('theme') || 'dark');
+  const [theme, setTheme] = useState(window.localStorage.getItem("theme") || "dark");
 
   useEffect(() => {
     const el = document.getElementById("preload-overlay");
@@ -1785,7 +1786,7 @@ function UIRootHooksWrapper(props) {
     //   </ObjectListProvider>
     // </ChatContextProvider>
     <Theme value={setTheme}>
-      <ThemeProvider theme={theme === 'dark' ? darkTheme : lightTheme}>
+      <ThemeProvider theme={theme === "dark" ? darkTheme : lightTheme}>
         <ButtonContext.Provider value={{ button, setButton }}>
           <ChatContextProvider messageDispatch={props.messageDispatch}>
             <ObjectListProvider scene={props.scene}>

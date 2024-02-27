@@ -157,8 +157,8 @@ import MessageDispatch from "./message-dispatch";
 import SceneEntryManager from "./scene-entry-manager";
 import Subscriptions from "./subscriptions";
 import { createInWorldLogMessage } from "./react-components/chat-message";
-import { Http } from './utils/http';
-import { API_ENDPOINTS, BASE_URL, exitRoom, testEnd } from './utils/api';
+import { Http } from "./utils/http";
+import { API_ENDPOINTS, BASE_URL, exitRoom, testEnd } from "./utils/api";
 
 import "./systems/nav";
 import "./systems/frame-scheduler";
@@ -693,11 +693,11 @@ async function runBotMode(scene, entryManager) {
 
 async function isUserAuthorized() {
   try {
-    let token = qs.get('entry');
+    let token = qs.get("entry");
     if (token) {
-      window.localStorage.setItem('token', token);
+      window.localStorage.setItem("token", token);
     } else {
-      token = window.localStorage.getItem('token');
+      token = window.localStorage.getItem("token");
     }
     if (isVRConnected) return true;
     return token !== null;
@@ -709,37 +709,37 @@ async function isUserAuthorized() {
 function showTokenLockedUI(info) {
   const { CHAIN, PROJECT_NAME, PROJECT_LINK, TOKEN, LOCK_TYPE } = info;
 
-  const tokenLock = document.getElementById('token-lock');
+  const tokenLock = document.getElementById("token-lock");
 
-  const container = document.createElement('div');
-  container.classList.add('token-lock__container');
+  const container = document.createElement("div");
+  container.classList.add("token-lock__container");
 
-  const tokenLockTextChainInfo = document.createElement('p');
-  const tokenLockTextProjectName = document.createElement('p');
-  const tokenLockTextProjectWebsite = document.createElement('a');
-  const tokenLockTextContractAddress = document.createElement('p');
-  const linkMetaManagement = document.createElement('a');
+  const tokenLockTextChainInfo = document.createElement("p");
+  const tokenLockTextProjectName = document.createElement("p");
+  const tokenLockTextProjectWebsite = document.createElement("a");
+  const tokenLockTextContractAddress = document.createElement("p");
+  const linkMetaManagement = document.createElement("a");
 
-  tokenLockTextChainInfo.classList.add('token-lock__content-text', 'chain-info');
+  tokenLockTextChainInfo.classList.add("token-lock__content-text", "chain-info");
   tokenLockTextChainInfo.innerText = `This room is a ${chains[CHAIN]} ${
-    LOCK_TYPE === 4 ? 'NFT Token Locked' : 'Token Locked'
+    LOCK_TYPE === 4 ? "NFT Token Locked" : "Token Locked"
   }, please visit the project:`;
 
-  tokenLockTextProjectName.classList.add('token-lock__content-text', 'project-name');
+  tokenLockTextProjectName.classList.add("token-lock__content-text", "project-name");
   tokenLockTextProjectName.innerText = PROJECT_NAME;
 
-  tokenLockTextProjectWebsite.classList.add('token-lock__content-text', 'project-website', 'link');
-  tokenLockTextProjectWebsite.setAttribute('href', PROJECT_LINK);
-  tokenLockTextProjectWebsite.setAttribute('target', '_blank');
-  tokenLockTextProjectWebsite.setAttribute('rel', 'noreferrer');
+  tokenLockTextProjectWebsite.classList.add("token-lock__content-text", "project-website", "link");
+  tokenLockTextProjectWebsite.setAttribute("href", PROJECT_LINK);
+  tokenLockTextProjectWebsite.setAttribute("target", "_blank");
+  tokenLockTextProjectWebsite.setAttribute("rel", "noreferrer");
   tokenLockTextProjectWebsite.innerText = PROJECT_LINK;
 
-  tokenLockTextContractAddress.classList.add('token-lock__content-text', 'contract-address');
+  tokenLockTextContractAddress.classList.add("token-lock__content-text", "contract-address");
   tokenLockTextContractAddress.innerText = TOKEN;
 
-  linkMetaManagement.classList.add('token-lock__content-text', 'link-meta-management', 'link');
-  linkMetaManagement.setAttribute('href', iframeURL);
-  linkMetaManagement.innerText = 'Visit Meta Management APP';
+  linkMetaManagement.classList.add("token-lock__content-text", "link-meta-management", "link");
+  linkMetaManagement.setAttribute("href", iframeURL);
+  linkMetaManagement.innerText = "Visit Meta Management APP";
 
   container.appendChild(tokenLockTextChainInfo);
   container.appendChild(tokenLockTextProjectName);
@@ -748,26 +748,26 @@ function showTokenLockedUI(info) {
   container.appendChild(linkMetaManagement);
 
   tokenLock.appendChild(container);
-  tokenLock.classList.add('visible');
+  tokenLock.classList.add("visible");
 }
 
 async function isBannedUser() {
   try {
-    let token = window.localStorage.getItem('token');
-    const defaultRoomId = configs.feature('default_room_id');
+    let token = window.localStorage.getItem("token");
+    const defaultRoomId = configs.feature("default_room_id");
     if (!token) return false;
 
     const hubId =
-      qs.get('hub_id') ||
-      (document.location.pathname === '/' && defaultRoomId
+      qs.get("hub_id") ||
+      (document.location.pathname === "/" && defaultRoomId
         ? defaultRoomId
-        : document.location.pathname.substring(1).split('/')[0]);
+        : document.location.pathname.substring(1).split("/")[0]);
 
     const response = await fetch(`${BASE_URL}/auth?roomId=${hubId}`, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        Authorization: `Bearer ${token}`,
-      },
+        Authorization: `Bearer ${token}`
+      }
     });
 
     if (response.ok) {
@@ -778,7 +778,7 @@ async function isBannedUser() {
       window.APP.userEmail = email;
 
       if (metaverseAccessToken) {
-        window.localStorage.setItem('metaverse-token', metaverseAccessToken);
+        window.localStorage.setItem("metaverse-token", metaverseAccessToken);
       }
     }
 
@@ -800,33 +800,33 @@ async function isBannedUser() {
 
 async function getRoomDetails() {
   try {
-    const defaultRoomId = configs.feature('default_room_id');
+    const defaultRoomId = configs.feature("default_room_id");
     const hubId =
-      qs.get('hub_id') ||
-      (document.location.pathname === '/' && defaultRoomId
+      qs.get("hub_id") ||
+      (document.location.pathname === "/" && defaultRoomId
         ? defaultRoomId
-        : document.location.pathname.substring(1).split('/')[0]);
+        : document.location.pathname.substring(1).split("/")[0]);
 
     const body = {
-      roomid: hubId,
+      roomid: hubId
     };
 
     const response = await fetch(`${BASE_URL}/getroomdetails`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-type': 'application/json',
+        "Content-type": "application/json"
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(body)
     });
 
     if (response.ok) {
       const roomDetails = await response.json();
 
-      window.APP.roomCreatedDate = (roomDetails.length && roomDetails[0]['CREATED_DATE']) || new Date('2000');
-      window.APP.isUnlimitedDate = (roomDetails.length && roomDetails[0]['ISUNLIMITEDACCESS']) || false;
-      window.APP.isSuspend = (roomDetails.length && roomDetails[0]['ISSUSPENDED']) || false;
-      window.APP.isClosed = (roomDetails.length && roomDetails[0]['CLOSED']) || false;
-      window.APP.ownerWalletId = (roomDetails.length && roomDetails[0]['WALLETID']) || '';
+      window.APP.roomCreatedDate = (roomDetails.length && roomDetails[0]["CREATED_DATE"]) || new Date("2000");
+      window.APP.isUnlimitedDate = (roomDetails.length && roomDetails[0]["ISUNLIMITEDACCESS"]) || false;
+      window.APP.isSuspend = (roomDetails.length && roomDetails[0]["ISSUSPENDED"]) || false;
+      window.APP.isClosed = (roomDetails.length && roomDetails[0]["CLOSED"]) || false;
+      window.APP.ownerWalletId = (roomDetails.length && roomDetails[0]["WALLETID"]) || "";
     }
 
     return response.ok;
@@ -837,19 +837,19 @@ async function getRoomDetails() {
 
 async function canMessageUser() {
   try {
-    const token = window.localStorage.getItem('token');
+    const token = window.localStorage.getItem("token");
 
     const res = await fetch(`${BASE_URL}/checkcanmessage`, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Content-type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
+        "Content-type": "application/json",
+        Authorization: `Bearer ${token}`
+      }
     });
 
     const { canMessage } = await res.json();
 
-    return !Boolean(canMessage);
+    return !canMessage;
   } catch (e) {
     return true;
   }
@@ -866,7 +866,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   if (!isRoomExist) {
-    document.querySelector('#login-error-message').classList.add('visible');
+    document.querySelector("#login-error-message").classList.add("visible");
 
     return;
   }
@@ -874,7 +874,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (isAuthorized) {
     window.APP.isAuthorized = true;
   } else {
-    document.querySelector('#login-error-message').classList.add('visible');
+    document.querySelector("#login-error-message").classList.add("visible");
     return;
   }
 
@@ -906,14 +906,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  const defaultRoomId = configs.feature('default_room_id');
+  const defaultRoomId = configs.feature("default_room_id");
 
-  const hubId =
-    qs.get('hub_id') ||
-    (document.location.pathname === '/' && defaultRoomId
-      ? defaultRoomId
-      : document.location.pathname.substring(1).split('/')[0]);
-  // const hubId = getCurrentHubId();
+  // const hubId =
+  //   qs.get('hub_id') ||
+  //   (document.location.pathname === '/' && defaultRoomId
+  //     ? defaultRoomId
+  //     : document.location.pathname.substring(1).split('/')[0]);
+  const hubId = getCurrentHubId();
   console.log(`Hub ID: ${hubId}`);
 
   if (!defaultRoomId) {
