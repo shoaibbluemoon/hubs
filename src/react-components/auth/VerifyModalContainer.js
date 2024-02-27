@@ -24,7 +24,7 @@ function useVerify() {
           origin: qs.get("auth_origin"),
           payload: qs.get("auth_payload")
         };
-
+        console.log("VerifyModalContainer", authParams)
         await verify(authParams);
         setStep(VerificationStep.complete);
       } catch (error) {

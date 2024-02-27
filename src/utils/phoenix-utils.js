@@ -2,7 +2,7 @@ import { Socket } from "phoenix";
 import { generateHubName } from "../utils/name-generation";
 import configs from "../utils/configs";
 import { sleep } from "../utils/async-utils";
-import { store } from "../utils/store-instance";
+import { store } from "../utils/store-instance.ts";
 
 export function hasReticulumServer() {
   return !!configs.RETICULUM_SERVER;

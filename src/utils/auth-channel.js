@@ -40,6 +40,7 @@ export default class AuthChannel {
         .join()
         .receive("ok", () => {
           channel.on("auth_credentials", async ({ credentials: token, payload: payload }) => {
+            console.log("auth-channel", { credentials: token, payload: payload })
             await this.handleAuthCredentials(payload.email, token);
             resolve();
           });
@@ -69,6 +70,7 @@ export default class AuthChannel {
   }
 
   async handleAuthCredentials(email, token, hubChannel) {
+    console.log("auth-channel", email, token)
     this.store.update({ credentials: { email, token } });
 
     if (hubChannel) {

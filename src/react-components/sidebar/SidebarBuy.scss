@@ -1,0 +1,398 @@
+:local(.container) {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #D7D7D7;
+    position: absolute;
+    right: 0;
+    padding: 120px 36px 20px;
+    max-width: 420px;
+    width: 100%;
+    height: 100%;
+    background-color: #FFFFFF;
+    color: #777E90;
+    overflow-y: scroll;
+    z-index: 10;
+
+    :local(a) {
+        color: white;
+    }
+
+    @media(max-width:600px) {
+        max-width: 100%;
+    }
+}
+
+:local(.loader) {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+:local(.containerWhite) {
+    @extend :local(.container);
+    background-color: #fff;
+
+    :local(a) {
+        color: #777E90;
+    }
+}
+
+:local(.titleWhite) {
+    margin: 117px 0 8px;
+    font-size: 40px;
+    color: #FCFCFD;
+}
+
+:local(.titleDark) {
+    @extend :local(.titleWhite);
+    color: #0E1526
+}
+
+:local(.subTitleWhite) {
+    margin-top: 11px;
+    margin-bottom: 94px;
+    font-size: 32px;
+    text-align: center;
+    color: #F4F5F6;
+}
+
+:local(.subTitleDark) {
+    @extend :local(.subTitleWhite);
+    color: #10182c;
+}
+
+:local(.priceContainer) {
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+:local(.priceButtonActive) {
+    padding: 8px 8px 6px;
+    border: 2px solid #45B26B;
+    border-radius: 4px;
+    color: #45B26B;
+    background-color: transparent;
+}
+
+:local(.priceButton) {
+    @extend :local(.priceButtonActive);
+    border-color: #353945;
+    color: #353945;
+}
+
+:local(.actionsContainer) {
+    margin-bottom: 38px;
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 10px;
+    border: 2px solid #353945;
+    border-radius: 36px;
+    font-size: 14px;
+
+    :local(.actionButton) {
+        padding: 6px 12px;
+        border: none;
+        background-color: transparent;
+    }
+
+    :local(.actionButtonActive) {
+        padding: 6px 12px;
+        background-color: #E6E8EC;
+        border-radius: 100px;
+        border: none;
+        color: #27324F;
+    }
+}
+
+:local(.text) {
+    margin-bottom: 85px;
+    line-height: 24px;
+}
+
+:local(.textNoMargin) {
+    @extend :local(.text);
+    margin-bottom: 24px;
+}
+
+:local(.imageWrapper) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+:local(.textWhite) {
+    margin-bottom: 33px;
+    color: #FCFCFD;
+    text-align: center;
+}
+
+:local(.textDark) {
+    @extend :local(.textWhite);
+    color: #777E90;
+}
+
+:local(.buttons) {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+:local(.mainButton) {
+    $this: &;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px 24px;
+    background: linear-gradient(180deg, #0090B4 0%, #103F91 100%);
+    border: 2px solid transparent;
+    border-radius: 90px;
+    color: #F4F5F6;
+
+    +#{$this} {
+        margin-top: 15px;
+    }
+}
+
+:local(.secondaryButton) {
+    @extend :local(.mainButton);
+    border: 2px solid #353945;
+    background: transparent;
+    color: inherit;
+}
+
+:local(.disabledButton) {
+    @extend :local(.mainButton);
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid #353945;
+    cursor: default;
+}
+
+:local(.deleteButton) {
+    @extend :local(.mainButton);
+    background: #EF466F;
+
+    &:not(:first-child) {
+        margin-top: 51px;
+    }
+}
+
+:local(.actionsButtonContainer) {
+    position: absolute;
+    top: 48px;
+    left: 36px;
+}
+
+:local(.closeButton),
+:local(.hideButton) {
+    padding: 8px;
+    border: none;
+    background: transparent;
+
+    svg {
+        *[stroke=\#000] {
+            transition: stroke 0.2s linear;
+        }
+
+        *[fill=\#000] {
+            transition: fill 0.2s linear;
+        }
+    }
+
+    &:hover {
+        svg {
+            *[stroke=\#000] {
+                stroke: #0D75FE;
+            }
+
+            *[fill=\#000] {
+                fill: #0D75FE;
+            }
+        }
+    }
+}
+
+:local(.hideButton) {
+    margin-left: 10px;
+}
+
+:local(.hideSideBar) {
+    position: absolute;
+    top: 8px;
+    left: 55px;
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    background: transparent;
+    border-radius: 50%;
+    border: 2px solid #353945;
+}
+
+:local(.alignImage) {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+:local(.infoImage) {
+    cursor: pointer;
+    position: absolute;
+    top: 10%;
+    right: 10%;
+}
+
+:local(.checkoutPrice) {
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    color: inherit;
+    border-bottom: 1px solid #353945;
+}
+
+:local(.checkoutInfo) {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 12px;
+
+    :local(span) {
+        &:last-child {
+            color: inherit;
+        }
+    }
+}
+
+:local(.checkoutInfoLast) {
+    @extend :local(.checkoutInfo);
+    margin-bottom: 44px;
+}
+
+:local(.transactionInfo) {
+    display: flex;
+    justify-content: space-between;
+    padding: 24px;
+    margin-bottom: 37px;
+    border: 1px solid #353945;
+    border-radius: 12px;
+}
+
+:local(.transactionInfoElement) {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+:local(.labelWhite) {
+    border-bottom: 1px solid #FCFCFD;
+    color: #FCFCFD;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    text-align: center;
+}
+
+:local(.labelDark) {
+    @extend :local(.labelWhite);
+    border-bottom: 1px solid #353945;
+    color: #777E90;
+}
+
+:local(.containerInput) {
+    margin-bottom: 25px;
+
+    div {
+        padding: 0 70px;
+    }
+
+    &:first-of-type {
+        margin-bottom: 15px;
+    }
+}
+
+:local(.input) {
+    background-color: #fff;
+    border-radius: 10px;
+    color: #CDCDCD;
+    font-size: 16px;
+    line-height: 19px;
+    padding: 11px;
+    text-align: center;
+    width: 100%;
+
+    &::placeholder {
+        color: #CDCDCD;
+        font-size: 16px;
+        line-height: 19px;
+    }
+}
+
+:local(.offersHead) {
+    border-bottom: 1px solid #353945;
+    color: #FCFCFD;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    margin: 42px 0 13px;
+    padding-bottom: 12px;
+    text-align: center;
+}
+
+:local(.offersHeadDark) {
+    @extend :local(.offersHead);
+    color: #777E90;
+}
+
+:local(.offersTable) {
+    margin-bottom: 15px;
+    width: 100%;
+
+    td {
+        padding: 6px 0;
+    }
+}
+
+:local(.offersTableHead) {
+    color: #FCFCFD;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    text-align: left;
+}
+
+:local(.offersTableHeadDark) {
+    @extend :local(.offersTableHead);
+    color: #777E90;
+}
+
+:local(.offersTableAmount) {
+    color: #777E90;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+}
+
+:local(.offersTableExpiration) {
+    color: #FCFCFD;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+}
+
+:local(.offersTableExpirationDark) {
+    @extend :local(.offersTableExpiration);
+    color: #777E90;
+}
+
+:local(.offersTableBtn) {
+    @extend :local(.mainButton);
+    padding: 5px 13px;
+}
+
+:local(.checkboxContainer) {
+    display: inline-block;
+}

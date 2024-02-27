@@ -4,7 +4,7 @@ import AuthChannel from "../src/utils/auth-channel";
 import configs from "../src/utils/configs.js";
 import { Socket } from "phoenix-channels";
 import { writeFileSync } from "fs";
-import { store } from "../src/utils/store-instance";
+import { store } from "../src/utils/store-instance.ts";
 
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 

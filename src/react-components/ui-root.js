@@ -1,9 +1,10 @@
-import React, { Component, useEffect } from "react";
+import React, { Component, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
 import copy from "copy-to-clipboard";
 import { FormattedMessage } from "react-intl";
 import screenfull from "screenfull";
+import { ButtonContext } from '../context/ButtonContext';
 
 import configs from "../utils/configs";
 import { VR_DEVICE_AVAILABILITY } from "../utils/vr-caps-detect";
@@ -86,6 +87,7 @@ import { ReactionPopoverContainer } from "./room/ReactionPopoverContainer";
 import { SafariMicModal } from "./room/SafariMicModal";
 import { RoomSignInModalContainer } from "./auth/RoomSignInModalContainer";
 import { NftToolbarContainer } from './room/NftToolbarContainer';
+import { removeNetworkedObject } from '../utils/removeNetworkedObject';
 import { SignInStep } from "./auth/SignInModal";
 import { LeaveReason, LeaveRoomModal } from "./room/LeaveRoomModal";
 import { RoomSidebar } from "./room/RoomSidebar";
@@ -105,7 +107,15 @@ import { ECSDebugSidebarContainer } from "./debug-panel/ECSSidebar";
 import { NotificationsContainer } from "./room/NotificationsContainer";
 import { usePermissions } from "./room/usePermissions";
 import { vision } from '../vision/visionUtils';
+import { ResizeRotate } from './room/ResizeRotate';
 import { RoomPermissionsSidebar } from './room/RoomPermissionsSidebar';
+import { SidebarBuy } from './sidebar/SidebarBuy';
+import { Theme } from '../context/ThemeContext';
+import { ThemeProvider } from 'styled-components';
+import { getElementUrl, getObjectUrl } from './room/object-hooks';
+import { DeletedWarningText } from './room/DeletedWarningText';
+import { CountDownTimer } from './room/CountDownTimer';
+import { LiveStreamContainer } from './room/LiveStreamContainer';
 
 import { sharingEnabled, spectateEnabled, videoSharingEnabled } from '../vision/config/visFeatureConfig';
 import { checkUserNft, getAsset, iframeURL, removeNftOwner, roomAssetsList } from '../utils/api';
@@ -127,6 +137,7 @@ async function grantedMicLabels() {
 const isMobile = AFRAME.utils.device.isMobile();
 const isMobileVR = AFRAME.utils.device.isMobileVR();
 const AUTO_EXIT_TIMER_SECONDS = 10;
+const timerValue = 30;
 
 class UIRoot extends Component {
   willCompileAndUploadMaterials = false;
@@ -214,18 +225,32 @@ class UIRoot extends Component {
     sidebarId: null,
     presenceCount: 0,
     chatPrefix: "",
-    chatAutofocus: false
+    chatAutofocus: false,
+
+    sidebarBuyOpened: false,
+    objectId: null,
+    saledNFTS: [],
+
+    timer: timerValue,
+    deletedObject: null,
   };
 
   constructor(props) {
+    const qs = new URLSearchParams(location.search);
+    const hubId =qs.get("hub_id")
+    console.log("ui-root", hubId)
+    
     vision.api.checkUserAdmin();
     super(props);
+
+    
 
     props.mediaSearchStore.setHistory(props.history);
 
     // An exit handler that discards event arguments and can be cleaned up.
     this.exitEventHandler = () => this.props.exitScene();
     this.mediaDevicesManager = APP.mediaDevicesManager;
+    this.timerId = React.createRef(null);
   }
 
   componentDidUpdate(prevProps) {
@@ -291,7 +316,58 @@ class UIRoot extends Component {
     if (this.state.presenceCount != this.occupantCount()) {
       this.setState({ presenceCount: this.occupantCount() });
     }
+
+    if (this.state.timer === 0) {
+      removeNetworkedObject(this.props.scene, this.state.deletedObject);
+      this.props.scene.remove(this.state.deletedObject);
+      clearInterval(this.timerId.current);
+      this.setState({ timer: timerValue });
+      this.timerId.current = null;
+      window.APP.entryManager._unpinElement(this.state.deletedObject);
+    }
+    console.log({'prop obj': this.props.activeObject})
+    if (this.props.activeObject && this.props.activeObject.id !== this.state.objectId) {
+      const assetUrl = getObjectUrl(this.props.activeObject);
+      const qs = new URLSearchParams(location.search);
+      const defaultRoomId = configs.feature('default_room_id');
+      const hubId =
+        qs.get('hub_id') ||
+        (document.location.pathname === '/' && defaultRoomId
+          ? defaultRoomId
+          : document.location.pathname.substring(1).split('/')[0]);
+
+      getAsset(assetUrl)
+        .then((assetInfo) => {
+          console.log({assetInfo})
+          window.APP.store.asset = {
+            modelurl: assetInfo.ASSETSTORAGEREF,
+            roomid: hubId,
+            isNft: assetInfo.ASSET_TYPE === 'nft',
+          };
+          this.setState({ sidebarBuyOpened: assetInfo.ASSET_TYPE === 'nft', objectId: this.props.activeObject.id });
+        })
+        .catch(() => {
+          this.setState({ sidebarBuyOpened: false, objectId: this.props.activeObject.id });
+        });
+    }
+
   }
+
+  onDeleteSelectedObject = (object) => {
+    this.setState({ deletedObject: object });
+
+    const timerTick = () => {
+      if (this.state.timer !== 0) {
+        this.setState({ timer: this.state.timer - 1 });
+      }
+    };
+
+    if (!this.timerId.current) {
+      this.timerId.current = setInterval(() => {
+        timerTick();
+      }, 1000);
+    }
+  };
 
   onConcurrentLoad = () => {
     if (qsTruthy("allow_multi") || this.props.store.state.preferences.allowMultipleHubsInstances) return;
@@ -496,6 +572,7 @@ class UIRoot extends Component {
     window.removeEventListener("idle_detected", this.onIdleDetected);
     window.removeEventListener("activity_detected", this.onActivityDetected);
     window.removeEventListener("focus_chat", this.onFocusChat);
+    clearInterval(this.timerId);
   }
 
   storeUpdated = () => {
@@ -865,6 +942,10 @@ class UIRoot extends Component {
       };
     });
   }
+
+  handleNFTSale = (name) => {
+    this.setState({ saledNFTS: [...this.state.saledNFTS, name] });
+  };
 
   onFocusChat = e => {
     this.setSidebar("chat", {
@@ -1371,8 +1452,31 @@ class UIRoot extends Component {
                         )}
                       </ContentMenu>
                     )}
+                    {/* SIDEBAR */}
+                    {sideBarShow && (
+                      <SidebarBuy
+                        deletedObject={this.state.deletedObject}
+                        timerId={this.timerId.current}
+                        timer={this.state.timer}
+                        onDelete={this.onDeleteSelectedObject}
+                        hubChannel={this.props.hubChannel}
+                        scene={this.props.scene}
+                        saledNFTS={this.state.saledNFTS}
+                        handleSale={this.handleNFTSale}
+                        object={this.props.activeObject}
+                      />
+                    )}
+                    {this.props.activeObject &&
+                      vision.api.isAdmin && (
+                        <ResizeRotate
+                          object={this.props.activeObject}
+                          hubChannel={this.props.hubChannel}
+                          scene={this.props.scene}
+                          isSidebarOpen={this.state.sidebarBuyOpened}
+                        />
+                      )}
                     {!entered && !streaming && !isMobile && streamerName && <SpectatingLabel name={streamerName} />}
-                    {this.props.activeObject && (
+                    {/* {this.props.activeObject && (
                       <ObjectMenuContainer
                         hubChannel={this.props.hubChannel}
                         scene={this.props.scene}
@@ -1383,7 +1487,7 @@ class UIRoot extends Component {
                           }
                         }}
                       />
-                    )}
+                    )} */}
                     {this.state.sidebarId !== "chat" && this.props.hub && (
                       <PresenceLog
                         preset={"InRoom"}
@@ -1431,6 +1535,12 @@ class UIRoot extends Component {
                         showAudioDebug={showAudioDebugPanel}
                       />
                     )}
+                    <DeletedWarningText timer={this.state.timer} timerId={this.timerId.current} />
+                    {!this.props.activeObject && !this.state.sidebarId && <CountDownTimer scene={this.props.scene} />}
+                    <LiveStreamContainer
+                      isVisible={this.state.isLiveStreamModalOpen}
+                      handleClose={() => this.setState({ isLiveStreamModalOpen: false })}
+                    />
                   </>
                 }
                 sidebar={
@@ -1632,10 +1742,22 @@ class UIRoot extends Component {
   }
 }
 
+export const darkTheme = {
+  backgroundColor: '#0e1526',
+  textColor: '#fcfcfd',
+};
+
+export const lightTheme = {
+  backgroundColor: '#fff',
+  textColor: '#777E90',
+};
+
 function UIRootHooksWrapper(props) {
   useAccessibleOutlineStyle();
   const breakpoint = useCssBreakpoints();
   const { voice_chat: canVoiceChat } = usePermissions();
+  const [button, setButton] = useState(false);
+  const [theme, setTheme] = useState(window.localStorage.getItem('theme') || 'dark');
 
   useEffect(() => {
     const el = document.getElementById("preload-overlay");
@@ -1657,11 +1779,22 @@ function UIRootHooksWrapper(props) {
   }, [props.scene]);
 
   return (
-    <ChatContextProvider messageDispatch={props.messageDispatch}>
-      <ObjectListProvider scene={props.scene}>
-        <UIRoot breakpoint={breakpoint} {...props} canVoiceChat={canVoiceChat} />
-      </ObjectListProvider>
-    </ChatContextProvider>
+    // <ChatContextProvider messageDispatch={props.messageDispatch}>
+    //   <ObjectListProvider scene={props.scene}>
+    //     <UIRoot breakpoint={breakpoint} {...props} canVoiceChat={canVoiceChat} />
+    //   </ObjectListProvider>
+    // </ChatContextProvider>
+    <Theme value={setTheme}>
+      <ThemeProvider theme={theme === 'dark' ? darkTheme : lightTheme}>
+        <ButtonContext.Provider value={{ button, setButton }}>
+          <ChatContextProvider messageDispatch={props.messageDispatch}>
+            <ObjectListProvider scene={props.scene}>
+              <UIRoot breakpoint={breakpoint} {...props} canVoiceChat={canVoiceChat} />
+            </ObjectListProvider>
+          </ChatContextProvider>
+        </ButtonContext.Provider>
+      </ThemeProvider>
+    </Theme>
   );
 }
 

@@ -17,6 +17,7 @@ import { updateMaterials } from "../utils/material-utils";
 import { MediaType } from "../utils/media-utils";
 import { cloneObject3D, setMatrixWorld } from "../utils/three-utils";
 import { takeOwnership } from "../utils/take-ownership";
+import { placeAsset, placeNonNFTAsset } from '../utils/api';
 
 const EMPTY_COLOR = 0x6fc0fd;
 const HOVER_COLOR = 0x2f80ed;
@@ -70,6 +71,26 @@ function getCapturableEntity(world, frame) {
       !isAncestor(bodyData.object3D, frameObj)
     ) {
       return eid;
+    }
+  }
+  return null;
+}
+
+function getCapturableEntity2(world, frame) {
+  const physicsSystem = AFRAME.scenes[0].systems["hubs-systems"].physicsSystem;
+  const collisions = physicsSystem.getCollisions(Rigidbody.bodyId[frame]);
+  const frameObj = world.eid2obj.get(frame);
+  for (let i = 0; i < collisions.length; i++) {
+    const bodyData = physicsSystem.bodyUuidToData.get(collisions[i]);
+    const eid = bodyData.object3D.eid;
+    const mediaObjectEl = bodyData && bodyData.object3D && bodyData.object3D.el;
+    if (
+      MediaFrame.mediaType[frame] & mediaTypeMaskFor(world, eid) &&
+      !hasComponent(world, MediaLoading, eid) &&
+      !inOtherFrame(world, frame, eid) &&
+      !isAncestor(bodyData.object3D, frameObj)
+    ) {
+      return mediaObjectEl;
     }
   }
   return null;
@@ -185,10 +206,31 @@ const zero = [0, 0, 0];
 const tmpVec3 = new THREE.Vector3();
 
 export function display(world, frame, heldMediaTypes) {
+  const captured2 = getCapturableEntity2(world, frame)
   const capturable = !MediaFrame.capturedNid[frame] && getCapturableEntity(world, frame);
+
   const shouldPreviewBeVisible = capturable && hasComponent(world, Held, capturable);
   if (shouldPreviewBeVisible && !MediaFrame.preview[frame]) {
     showPreview(world, frame, capturable);
+    const { isNft, ...assetInfo } = window.APP.store.asset;
+    console.log({isNft})
+    if (isNft) {
+      placeAsset(assetInfo).then((isPlaced) => {
+        if (isPlaced) {
+          captured2.setAttribute('pinnable', 'pinned', true);
+          captured2.emit('pinned', { el: captured2 });
+          window.APP.entryManager._pinElement(captured2);
+        }
+      });
+    } else {
+      placeNonNFTAsset(assetInfo).then((isPlaced) => {
+        if (isPlaced) {
+          captured2.setAttribute('pinnable', 'pinned', true);
+          captured2.emit('pinned', { el: capturable });
+          window.APP.entryManager._pinElement(captured2);
+        }
+      });
+    }
   } else if (!shouldPreviewBeVisible && MediaFrame.preview[frame]) {
     hidePreview(world, frame);
   }
@@ -198,6 +240,7 @@ export function display(world, frame, heldMediaTypes) {
 
   if (frameObj.visible) {
     const captured = world.nid2eid.get(MediaFrame.capturedNid[frame]) || 0;
+ 
     const isHoldingObjectOfInterest =
       (captured && hasComponent(world, Held, captured)) || (capturable && hasComponent(world, Held, capturable));
 

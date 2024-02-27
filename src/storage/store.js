@@ -10,7 +10,7 @@ export const LOCAL_STORE_VALUE = {
   credentials: {
     email: 'admin@bluemoon.io',
     token:
-      'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJibHVlbW9vbi5sYW5kIiwiZXhwIjoxNzE0MTQwMjkxLCJpYXQiOjE3MDY4ODI2OTEsImlzcyI6ImJsdWVtb29uLmxhbmQiLCJqdGkiOiIwNmEyOTU1Yi03Y2FiLTQ5MjAtODZkNC1lNmY0N2Q0NjMwNWMiLCJuYmYiOjE3MDY4ODI2OTAsInN1YiI6IjE2ODc1OTIwNjE2NTEzODYzNzAiLCJ0eXAiOiJhY2Nlc3MifQ.lGJVeOLEgVdOV0f-5K4gsVv71wEetwfih7C9jxPNfR0ur0vAdSuwNDXx9Pgm_WGk_MOFlnkxhMitwNGmvNaP4w',
+      'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJibHVlbW9vbi5sYW5kIiwiZXhwIjoxNzE1NTk4NTQ2LCJpYXQiOjE3MDgzNDA5NDYsImlzcyI6ImJsdWVtb29uLmxhbmQiLCJqdGkiOiJhN2Q3ZGVlMC1mNWY4LTQyNDAtOGM0ZC1lMWI1NjE5NjMyYmYiLCJuYmYiOjE3MDgzNDA5NDUsInN1YiI6IjE2OTc3MTAwNTYwMDg1ODExMjIiLCJ0eXAiOiJhY2Nlc3MifQ.0KqJCBpiWl_YSRh10L9BlFYPrmlJzJd15J1kwqr6kuAj8sxvN49HbnkSnEDlz4lEnQOs_NiGgdgtV5qBDQ8W3Q',
   },
 };
 
@@ -323,12 +323,20 @@ export default class Store extends EventTarget {
   };
 
   checkAdmin = async () => {
-    const isAdmin = await vision.api.checkUserAdmin();
-    if (isAdmin) {
-      this.update(LOCAL_STORE_VALUE);
-    } else {
-      this.update({ credentials: { token: null, email: null } });
-    }
+    const qs = new URLSearchParams(location.search);
+       
+    
+      const hubId =
+          qs.get("hub_id")
+    if(hubId){
+      const isAdmin = await vision.api.checkUserAdmin();
+      if (isAdmin) {
+        this.update(LOCAL_STORE_VALUE);
+      } else {
+        this.update({ credentials: { token: null, email: null } });
+      }
+
+    }        
   };
 
   initProfile = async () => {
@@ -449,7 +457,7 @@ export default class Store extends EventTarget {
       }
       this._preferences = finalState.preferences;
     }
-
+    console.log("store", finalState)
     localStorage.setItem(LOCAL_STORE_KEY, JSON.stringify(finalState));
     delete this[STORE_STATE_CACHE_KEY];
 

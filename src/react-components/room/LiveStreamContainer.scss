@@ -1,0 +1,47 @@
+:local(.live-stream-container) {
+    background-color: transparent;
+    padding: 20px;
+    // position: absolute;
+    // bottom: 0;
+    // right: 0;
+    // left: 0;
+    // top: 0;
+    // z-index: 999;
+}
+
+:local(.live-stream-inner) {
+    position: relative;
+    max-width: 500px;
+    height: 0;
+    overflow: hidden;
+    padding-bottom: calc(500px * 2 / 3);
+}
+
+:local(.live-stream-close-btn) {
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid #000;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 5px;
+    z-index: 1;
+    transition: background-color 0.2s linear;
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 1);
+    }
+}
+
+:local(.iframe) {
+    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    max-height: 600px;
+}
