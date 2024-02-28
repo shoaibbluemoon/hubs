@@ -140,6 +140,14 @@ const isMobileVR = AFRAME.utils.device.isMobileVR();
 const AUTO_EXIT_TIMER_SECONDS = 10;
 const timerValue = 30;
 
+export const LOCAL_STORE_VALUE = {
+  credentials: {
+    email: "admin@bluemoon.io",
+    token:
+      "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJibHVlbW9vbi5sYW5kIiwiZXhwIjoxNzE1NTk4NTQ2LCJpYXQiOjE3MDgzNDA5NDYsImlzcyI6ImJsdWVtb29uLmxhbmQiLCJqdGkiOiJhN2Q3ZGVlMC1mNWY4LTQyNDAtOGM0ZC1lMWI1NjE5NjMyYmYiLCJuYmYiOjE3MDgzNDA5NDUsInN1YiI6IjE2OTc3MTAwNTYwMDg1ODExMjIiLCJ0eXAiOiJhY2Nlc3MifQ.0KqJCBpiWl_YSRh10L9BlFYPrmlJzJd15J1kwqr6kuAj8sxvN49HbnkSnEDlz4lEnQOs_NiGgdgtV5qBDQ8W3Q"
+  }
+};
+
 class UIRoot extends Component {
   willCompileAndUploadMaterials = false;
 
@@ -237,14 +245,9 @@ class UIRoot extends Component {
   };
 
   constructor(props) {
-    const qs = new URLSearchParams(location.search);
-    // const hubId = qs.get("hub_id");
-    const hubId = getCurrentHubId();
-    console.log("ui-root-hubid", hubId);
-    if (hubId) {
-      vision.api.checkUserAdmin();
-    }
     super(props);
+
+    props.store.checkAdmin();
 
     props.mediaSearchStore.setHistory(props.history);
 
