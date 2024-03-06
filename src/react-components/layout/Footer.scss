@@ -1,91 +1,172 @@
 @use "../styles/theme.scss";
 
-footer {
-  display: block;
-  background-color: theme.$background2-color;
-  font-size: theme.$font-size-md;
-  padding: 20px;
+:local(.footer) {
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(2px);
 
-  @media(min-width: theme.$breakpoint-lg) {
-    padding: 0;
-    display: flex;
-  }
+  position: relative;
+}
 
-  nav {
-    display: flex;
+:local(.footer-decoration) {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
 
-    @media(min-width: theme.$breakpoint-lg) {
-      flex: 1;
-      justify-content: flex-end;
-    }
+  pointer-events: none;
 
+  :local(.decoration) {
+    position: absolute;
+    bottom: 0;
+    left: 0;
 
-    ul {
-      display: flex;
-      margin: 0;
-      padding: 0;
-      list-style: none;
-      align-items: center;
-      flex-direction: column;
-
-      @media(min-width: theme.$breakpoint-lg) {
-        flex-direction: row;
-      }
-    }
-
-    a {
-      color: theme.$text1-color;
-      font-weight: bold;
-    }
-
-    li {
-      display: flex;
-      padding-top: 20px;
-      align-items: center;
-
-      @media(min-width: theme.$breakpoint-lg) {
-        padding-top: 0;
-        margin-right: 20px;
-      }
-    }
+    transform: translate(-40%, 40%) rotate(-37.08deg);
   }
 }
 
 :local(.container) {
-  flex-direction: column;
-  align-items: center;
+  padding: 70px 10px 40px;
+  max-width: 1310px;
+  margin: 0 auto;
 
-  @media(min-width: theme.$breakpoint-lg) {
-    height: 80px;
-    flex-direction: row;
-    align-items: inherit;
+  @media (max-width: theme.$breakpoint-md) {
+    padding: 40px 20px;
   }
 }
 
-:local(.powered-by) {
-  text-align: center;
-  color: theme.$text1-color;
+:local(.top-content) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 60px;
+  justify-content: space-between;
+
+  + :local(.bottom-content) {
+    margin-top: 40px;
+  }
+
+  @media (max-width: theme.$breakpoint-md) {
+    align-items: center;
+    flex-direction: column;
+    gap: 30px;
+    text-align: center;
+  }
+}
+
+:local(.column) {
+  flex: 1;
+}
+
+:local(.footer-nav) {
+  display: flex;
+  justify-content: flex-end;
+  flex: 2;
+  gap: 0 20px;
+
+  @media (max-width: theme.$breakpoint-md) {
+    justify-content: flex-start;
+  }
+}
+
+:local(.footer-logo) {
+  max-width: 180px;
+
+  img {
+    width: 100%;
+  }
+
+  @media (max-width: theme.$breakpoint-md) {
+    margin: 0 auto;
+  }
+}
+
+:local(.footer-address) {
+  &:not(:first-child) {
+    margin-top: 20px;
+  }
+
+  p {
+    color: #767B82;
+    font-style: normal;
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 2.4;
+  }
+}
+
+:local(.footer-nav-header) {
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+
+:local(.footer-nav-link) {
+  color: #767B82;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 2.4;
+  letter-spacing: -0.02em;
+}
+
+:local(.mail) {
+  margin-top: 45px;
+}
+
+:local(.footer-social) {
   display: flex;
   justify-content: center;
-  flex-direction: column;
+  gap: 30px;
+}
 
-  @media(min-width: theme.$breakpoint-lg) {
-    margin-left: 20px;
+:local(.footer-social-link) {
+  $size: 56px;
+
+  align-items: center;
+  background-color: #253241;
+  border-radius: 20px;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  height: $size;
+  width: $size;
+
+  transition: color 0.2s linear;
+
+  svg {
+    $svg-size: 24px;
+
+    height: $svg-size;
+    width: $svg-size;
+
+    path {
+      transition: fill 0.2s linear; 
+      fill: #fff;
+    }
+  }
+
+  &:hover {
+    color: var(--link-color);
+
+    svg {
+      path {
+        fill: var(--link-color);
+      }
+    }
   }
 }
 
-:local(.company-logo) {
-  height: 49px;
-
-  @media(min-width: theme.$breakpoint-lg) {
-    margin-left: 18px;
-    height: 41px;
-  }
+:local(.bottom-content) {
+  text-align: center;
 }
 
-:local(.discord-logo) {
-  height: 24px;
-  width: 24px;
-  display: inline;
-  margin-right: 4px;
+:local(.copyright-text) {
+  color: #767B82;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
 }

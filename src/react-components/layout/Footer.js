@@ -1,119 +1,133 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { FormattedMessage } from "react-intl";
 import styles from "./Footer.scss";
-import discordLogoUrl from "../../assets/images/discord-logo-small.png";
-import { Container } from "./Container";
+import logoFooter from "../../assets/images/app-logo-footer.png";
+import decoration from "../../assets/images/footer-decoration.png";
+import { ReactComponent as TwitterIcon } from "../icons/TwitterFooter.svg";
+import { ReactComponent as DiscordIcon } from "../icons/DiscordNew.svg";
+import { ReactComponent as InstagramIcon } from "../icons/InstagramNew.svg";
+import classNames from "classnames";
+import {
+  deckLink,
+  discordLink,
+  instagramLink,
+  joinTheWaitListLink,
+  learnMoreLink,
+  twitterLink
+} from "../../utils/default-values";
 
-export function Footer({
-  hidePoweredBy,
-  showWhatsNewLink,
-  showTerms,
-  termsUrl,
-  showPrivacy,
-  privacyUrl,
-  showCompanyLogo,
-  companyLogoUrl,
-  showDiscordBotLink,
-  appName,
-  isHmc
-}) {
+const footerNav = [
+  {
+    head: "Information",
+    list: [
+      {
+        title: "Learn More",
+        link: learnMoreLink
+      },
+      {
+        title: "Bluemoon Waitlist",
+        link: joinTheWaitListLink
+      },
+      {
+        title: "Bluemoon Deck",
+        link: deckLink
+      }
+    ]
+  }
+];
+
+const footerSocial = [
+  {
+    name: "discord",
+    icon: DiscordIcon,
+    link: discordLink
+  },
+  {
+    name: "twitter",
+    icon: TwitterIcon,
+    link: twitterLink
+  },
+  {
+    name: "instagram",
+    icon: InstagramIcon,
+    link: instagramLink
+  }
+];
+
+export function FooterList({ footerList }) {
+  return footerList.map(footerItem => {
+    return (
+      <ul key={footerItem.head}>
+        <li className={styles.footerNavHeader}>{footerItem.head}</li>
+        {footerItem.list.map(item => (
+          <li key={item.title}>
+            <a href={item.link} target="_blank" rel="noreferrer" className={styles.footerNavLink}>
+              {item.title}
+            </a>
+          </li>
+        ))}
+        <li className={styles.mail}>
+          <a href="mailto:partnerships@bluemoon.io" className={styles.footerNavLink}>
+            partnerships@bluemoon.io
+          </a>
+        </li>
+      </ul>
+    );
+  });
+}
+
+export function Footer() {
+  const copyright = "© Bluemoon - All Right Reserved " + new Date().getFullYear();
+
   return (
-    <footer>
-      <Container as="div" className={styles.container}>
-        <div className={styles.poweredBy}>
-          {!hidePoweredBy && (
-            <FormattedMessage
-              id="footer.powered-by"
-              defaultMessage="Powered by <a>Hubs Cloud</a>"
-              values={{
-                // eslint-disable-next-line react/display-name
-                a: chunks => (
-                  <a className={styles.link} href="https://hubs.mozilla.com/cloud">
-                    {chunks}
-                  </a>
-                )
-              }}
-            />
-          )}
+    <footer className={styles.footer}>
+      {/* <div className={styles.footerDecoration}>
+        <img className={styles.decoration} src={decoration} />
+      </div> */}
+      <div className={styles.container}>
+        <div className={styles.topContent}>
+          <div className={styles.column}>
+            <div className={styles.footerLogo}>
+              <img src={logoFooter} />
+            </div>
+            <address className={styles.footerAddress}>
+              <p>
+                <FormattedMessage id="footer.address-ltd" defaultMessage="Bluemoon Ltd" />
+              </p>
+              <p>
+                <FormattedMessage id="footer.address" defaultMessage="160 Robinson Road, 14-04" />
+              </p>
+              <p>
+                <FormattedMessage id="footer.address-centre" defaultMessage="Singapore Business Federation Centre" />
+              </p>
+            </address>
+          </div>
+          <nav className={classNames(styles.column, styles.footerNav)}>
+            <FooterList footerList={footerNav} />
+          </nav>
+          <div className={styles.column}>
+            <ul className={styles.footerSocial}>
+              {footerSocial.map(socialItem => {
+                const Icon = socialItem.icon;
+
+                return (
+                  <li key={socialItem.name}>
+                    <a href={socialItem.link} target="_blank" rel="noreferrer" className={styles.footerSocialLink}>
+                      <Icon />
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </div>
-        <nav>
-          <ul>
-            {showDiscordBotLink && (
-              <li>
-                <img className={styles.discordLogo} src={discordLogoUrl} />
-                <a href="/discord">
-                  <FormattedMessage
-                    id="home-page.add-to-discord"
-                    defaultMessage="Add the {appName} Bot to Discord"
-                    values={{
-                      appName
-                    }}
-                  />
-                </a>
-              </li>
-            )}
-            {showWhatsNewLink && (
-              <li>
-                <a href="/whats-new">
-                  <FormattedMessage id="footer.whats-new" defaultMessage="What's New" />
-                </a>
-              </li>
-            )}
-            {isHmc && (
-              <li>
-                <a target="_blank" rel="noopener noreferrer" href={"https://shop.spreadshirt.com/mozillaMR/"}>
-                  <FormattedMessage id="footer.hubs-merch" defaultMessage="Hubs Merch" />
-                </a>
-              </li>
-            )}
-            {isHmc && (
-              <li>
-                <a target="_blank" rel="noopener noreferrer" href={"https://hubs.mozilla.com/docs/hubs-faq.html"}>
-                  <FormattedMessage id="footer.FAQ" defaultMessage="FAQ" />
-                </a>
-              </li>
-            )}
-            {showTerms && (
-              <li>
-                <a target="_blank" rel="noopener noreferrer" href={termsUrl}>
-                  <FormattedMessage id="footer.terms-of-use" defaultMessage="Terms of Use" />
-                </a>
-              </li>
-            )}
-            {showPrivacy && (
-              <li>
-                <a className={styles.link} target="_blank" rel="noopener noreferrer" href={privacyUrl}>
-                  <FormattedMessage id="footer.privacy-notice" defaultMessage="Privacy Notice" />
-                </a>
-              </li>
-            )}
-            {showCompanyLogo && (
-              <li>
-                <img
-                  className={styles.companyLogo}
-                  src={companyLogoUrl}
-                  alt={<FormattedMessage id="footer.logo-alt" defaultMessage="Logo" />}
-                />
-              </li>
-            )}
-          </ul>
-        </nav>
-      </Container>
+
+        <div className={styles.bottomContent}>
+          <p className={styles.copyrightText}>
+            <FormattedMessage id="footer.copyright" defaultMessage="{copyright}" values={{ copyright }} />
+          </p>
+        </div>
+      </div>
     </footer>
   );
 }
-
-Footer.propTypes = {
-  hidePoweredBy: PropTypes.bool,
-  showWhatsNewLink: PropTypes.bool,
-  showTerms: PropTypes.bool,
-  termsUrl: PropTypes.string,
-  showPrivacy: PropTypes.bool,
-  privacyUrl: PropTypes.string,
-  showCompanyLogo: PropTypes.bool,
-  companyLogoUrl: PropTypes.string,
-  showDiscordBotLink: PropTypes.bool,
-  appName: PropTypes.string,
-  isHmc: PropTypes.bool
-};

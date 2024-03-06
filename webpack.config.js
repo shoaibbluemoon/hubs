@@ -229,7 +229,7 @@ module.exports = async (env, argv) => {
   dotenv.config({ path: ".env" });
   dotenv.config({ path: ".defaults.env" });
 
-  let appConfig = undefined;
+  let appConfig = {};
 
   /**
    * Initialize the Webpack build envrionment for the provided environment.
@@ -263,6 +263,21 @@ module.exports = async (env, argv) => {
         ITA_SERVER: "",
         UPLOADS_HOST: `https://${localDevHost}:4000`
       });
+    }
+  }
+
+  if (argv.mode == "production") {
+    const themesPath = path.join(__dirname, "themes.json");
+
+    if (fs.existsSync(themesPath)) {
+      const themesString = fs.readFileSync(themesPath).toString();
+      const themes = JSON.parse(themesString);
+      appConfig = {
+        ...appConfig,
+        theme: {
+          themes: themes
+        }
+      };
     }
   }
 

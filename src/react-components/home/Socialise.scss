@@ -1,0 +1,75 @@
+@use "../styles/theme.scss";
+
+:local(section.socialise) {
+  perspective: 945px;
+  margin: 75px 0 165px;
+  position: relative;
+
+  @media (max-width: theme.$breakpoint-md) {
+    margin: 115px 0 115px;
+  }
+}
+
+:local(.container) {
+  max-width: 965px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+}
+
+:local(.socialise-decor) {
+  position: absolute;
+  filter: blur(125px);
+  top: 50%;
+  left: 50%;
+
+  pointer-events: none;
+
+  transform: translate(-50%, -50%);
+}
+
+:local(.socialise-text) {
+  color: #fff;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.1;
+  letter-spacing: 0.3em;
+  text-align: center;
+
+  margin-bottom: 8px;
+
+  @media (max-width: theme.$breakpoint-md) {
+    font-size: 12px;
+  }
+}
+
+:local(.socialise-heading) {
+  color: #fff;
+  font-family: theme.$font-family-jakarta;
+  font-weight: 600;
+  font-size: 64px;
+  line-height: 81px;
+  letter-spacing: -0.02em;
+
+  margin-bottom: 65px;
+
+  text-align: center;
+
+  @media (max-width: theme.$breakpoint-md) {
+    font-size: 36px;
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+}
+
+:local(.socialise-image-container) {
+  transition-duration: 300ms;
+  transition-property: transform, box-shadow;
+  transition-timing-function: ease-out;
+  transform: rotate3d(0, 0, 0, 0);
+
+  //&:hover {
+  //  transition-duration: 150ms;
+  //  box-shadow: 0 5px 20px 5px #ffffff44;
+  //}
+}

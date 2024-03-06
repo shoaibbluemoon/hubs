@@ -1,0 +1,54 @@
+@use "../styles/theme.scss";
+
+$blue-color: #0D75FE;
+
+:local(.social-right-bar) {
+  position: fixed;
+  right: 65px;
+  top: 355px;
+
+  z-index: 999;
+
+  @media (max-width: theme.$breakpoint-lg) {
+    display: none;
+  }
+}
+
+:local(.social-right-bar-list) {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+:local(.socialRightBarItemLink) {
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: color 0.2s linear;
+
+  svg {
+    $size: 24px;
+
+    height: $size;
+    width: $size;
+
+    path {
+      fill: #fff;
+
+      transition: fill 0.2s linear;
+    }
+  }
+
+  &:hover {
+    color: $blue-color;
+
+    svg {
+      path {
+        fill: $blue-color;
+      }
+    }
+  }
+}

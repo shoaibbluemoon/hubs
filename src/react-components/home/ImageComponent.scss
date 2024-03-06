@@ -1,0 +1,94 @@
+@use "../styles/theme.scss";
+
+:local(section.image-component) {
+  margin: 30px 0 115px;
+
+  position: relative;
+
+  @media (max-width: theme.$breakpoint-md) {
+    margin: 125px 0 125px;
+  }
+}
+
+:local(.decoration-image) {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  filter: blur(125px);
+
+  pointer-events: none;
+
+  transform: translateY(35%);
+}
+
+:local(.light-image) {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  pointer-events: none;
+
+  transform: translate(25%, -40%);
+}
+
+:local(.small-bubble-image) {
+  position: absolute;
+  bottom: 20%;
+  right: calc(50% - 650px);
+
+  pointer-events: none;
+}
+
+:local(.bubble-big) {
+  margin: -30px auto;
+  transform: translateX(-50%);
+
+  pointer-events: none;
+
+  @media (max-width: theme.$breakpoint-md) {
+    display: none;
+  }
+}
+
+:local(.container) {
+  max-width: 1210px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+}
+
+:local(.image-component-inner) {
+  position: relative;
+}
+
+:local(.last-image) {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  z-index: 1;
+
+  transform: translateY(-50%);
+
+  width: 61%;
+
+  &:hover {
+    + :local(.first-top-image) {
+      opacity: 0;
+    }
+  }
+}
+
+:local(.first-top-image) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+
+  transition: all 0.2s linear;
+
+  width: 61%;
+}
+
+:local(.first-bottom-image) {
+  width: 61%;
+}

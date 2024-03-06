@@ -1,0 +1,210 @@
+@use "../styles/theme.scss";
+
+$blue-color: #0D75FE;
+
+:local(section.hero-bluemoon) {
+  margin: 200px 0 125px;
+  position: relative;
+
+  @media (max-width: theme.$breakpoint-md) {
+    margin: 104px 0 114px;
+  }
+}
+
+:local(.decor-light) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  filter: blur(50px);
+
+  pointer-events: none;
+
+  transform: translate(-100px, -250px);
+
+  @media (max-width: theme.$breakpoint-md) {
+    transform: translate(10px, -120px);
+  }
+}
+
+:local(.container) {
+  align-items: center;
+  justify-content: space-between;
+  display: flex;
+
+  max-width: 1220px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+
+  @media (max-width: theme.$breakpoint-md) {
+    align-items: center;
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+:local(.hero-bluemoon-content) {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: theme.$breakpoint-md) {
+    align-items: center;
+    text-align: center;
+  }
+}
+
+:local(.hero-bluemoon-image-container) {
+  flex-shrink: 0;
+
+  @media (max-width: theme.$breakpoint-md) {
+    padding: 0 20px;
+  }
+}
+
+:local(.hero-bluemoon-top-content) {
+  color: #fff;
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 1.6;
+
+  border: 1px solid $blue-color;
+  border-radius: 40px;
+
+  padding: 9px 15px;
+  margin-bottom: 8px;
+
+  @media (max-width: theme.$breakpoint-md) {
+    font-size: 9px;
+
+    margin-bottom: 22px;
+  }
+}
+
+:local(.hero-bluemoon-heading) {
+  color: #fff;
+  font-weight: 600;
+  font-size: 55px;
+  line-height: 1.4;
+
+  span {
+    display: block;
+  }
+
+  @media (max-width: theme.$breakpoint-md) {
+    font-size: 28px;
+  }
+}
+
+:local(.hero-bluemoon-launching) {
+  font-weight: 700;
+  font-size: 55px;
+  line-height: 1.6;
+
+  background: linear-gradient(180deg, #0370FF 0%, #67EDFF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  @media (max-width: theme.$breakpoint-md) {
+    font-size: 28px;
+  }
+}
+
+:local(.hero-bluemoon-actions) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  margin-top: 20px;
+
+  @media (max-width: theme.$breakpoint-md) {
+    justify-content: center;
+  }
+}
+
+:local(.btn) {
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  border: 2px solid transparent;
+  border-radius: 15px;
+
+  color: #fff;
+  text-align: center;
+  text-transform: capitalize;
+}
+
+:local(.hero-bluemoon-join-btn) {
+  background-color: $blue-color;
+  border-color: $blue-color;
+
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 26px;
+
+  padding: 12px;
+  min-width: 213px;
+
+  transition: all 0.2s ease-out;
+
+  &:hover {
+    background-color: darken($blue-color, 15%);
+    border-color: darken($blue-color, 15%);
+    color: #fff;
+  }
+
+  @media (max-width: theme.$breakpoint-md) {
+    font-size: 12px;
+    padding: 5px;
+    min-width: 134px;
+  }
+}
+
+:local(.hero-bluemoon-discord-btn) {
+  border-color: #fff;
+
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 22px;
+
+  min-width: 172px;
+  padding: 14px;
+
+  transition: all 0.2s ease-out;
+
+  svg {
+    height: 21px;
+    width: 16px;
+
+    path {
+      fill: #fff;
+
+      transition: fill 0.2s linear;
+    }
+
+    @media (max-width: theme.$breakpoint-md) {
+      height: 13px;
+      width: 17px;
+    }
+  }
+
+  &:hover {
+    background-color: #fff;
+    color: #000;
+
+    svg {
+      path {
+        fill: #000;
+      }
+    }
+  }
+
+  @media (max-width: theme.$breakpoint-md) {
+    font-size: 12px;
+    padding: 5px;
+    min-width: 134px;
+  }
+}

@@ -1,0 +1,133 @@
+@use "../styles/theme.scss";
+
+:local(section.features) {
+  perspective: 945px;
+  margin: 135px 0 185px;
+
+  position: relative;
+
+  @media (max-width: theme.$breakpoint-md) {
+    margin: 115px 0 115px;
+  }
+}
+
+:local(.decors) {
+  pointer-events: none;
+}
+
+:local(.features-decor) {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+
+  transform: translate(-30%, 20%);
+}
+
+:local(.container) {
+  max-width: 990px;
+  margin: 0 auto;
+  padding: 0 20px;
+
+  position: relative;
+}
+
+:local(.features-text) {
+  color: #fff;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.1;
+  letter-spacing: 0.3em;
+  text-align: center;
+
+  margin-bottom: 12px;
+
+  @media (max-width: theme.$breakpoint-md) {
+    font-size: 12px;
+  }
+}
+
+:local(.features-heading) {
+  color: #fff;
+  font-weight: 600;
+  font-size: 64px;
+  line-height: 81px;
+  letter-spacing: -0.02em;
+
+  margin-bottom: 80px;
+
+  text-align: center;
+
+  @media (max-width: theme.$breakpoint-md) {
+    font-size: 36px;
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+}
+
+:local(.features-list) {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 50px 90px;
+
+  @media (max-width: theme.$breakpoint-md) {
+    gap: 10px;
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+:local(.features-item) {
+  border-radius: 10px;
+  cursor: default;
+  padding: 5px;
+
+  &:hover {
+
+    :local(.features-item-svg-container) {
+      background: rgba(13, 117, 254);
+    }
+  }
+}
+
+:local(.features-item-svg-container) {
+  $size: 70px;
+
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto;
+
+  height: $size;
+  width: $size;
+
+  transition: background 0.2s ease-out;
+}
+
+:local(.features-item-title) {
+  color: #fff;
+  font-family: theme.$font-family-jakarta;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 30px;
+  letter-spacing: 0.005em;
+  white-space: nowrap;
+
+  text-align: center;
+
+  margin-top: 22px;
+}
+
+:local(.features-item-text) {
+  color: #B0B0B0;
+  font-family: theme.$font-family-jakarta;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.8;
+  letter-spacing: 0.005em;
+
+  text-align: center;
+
+  margin-top: 16px;
+}

@@ -35,7 +35,7 @@ export function Page({
 }) {
   return (
     <>
-      {isHmc ? <Banner /> : null}
+      {/* {isHmc ? <Banner /> : null} */}
       <Header
         showCloud={showCloud}
         enableSpoke={enableSpoke}
@@ -52,7 +52,7 @@ export function Page({
         isHmc={isHmc}
       />
       <main {...rest}>
-        <MobileNav
+        {/* <MobileNav
           showDocsLink={showDocsLink}
           showSourceLink={showSourceLink}
           showCommunityLink={showCommunityLink}
@@ -60,7 +60,7 @@ export function Page({
           isAdmin={isAdmin}
           docsUrl={docsUrl}
           communityUrl={communityUrl}
-        />
+        /> */}
         {children}
       </main>
       <Footer
