@@ -1,7 +1,7 @@
 // for asmetaverse
 // export const BASE_URL = 'https://bluemoon-opensea.nw.r.appspot.com';
 
-// export const BASE_URL = 'http://localhost:2000';
+// export const BASE_URL = "http://localhost:2000";
 // export const BASE_URL = "https://vision.staging.bluemoon.io";
 export const BASE_URL = "https://vision.bluemoon.land";
 // for spaces
@@ -24,7 +24,7 @@ export const DOMAIN = "https://bluemoon.land/";
 
 // URL for iframe
 // export const iframeURL = 'https://d1oah3ppj6qtjj.cloudfront.net';
-// export const iframeURL = 'http://localhost:3000';
+// export const iframeURL = "http://localhost:3000";
 // export const iframeURL = "https://meta.staging.bluemoon.io";
 export const iframeURL = "https://meta.bluemoon.land";
 // for spaces
